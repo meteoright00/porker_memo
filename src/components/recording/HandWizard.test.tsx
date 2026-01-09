@@ -263,7 +263,7 @@ describe('HandWizard', () => {
             await user.click(screen.getByText('5')); await user.click(screen.getByText('♥'));
 
             // Check display
-            const selectedCards = screen.getAllByText(/♥/);
+
             // 2h, 3h, 4h are valid (3 cards). 5h should not be there.
             // Note: CardSelector renders suits on buttons too. We need to check the "Selected:" section specifically if possible,
             // or count total occurrences. But easier: CardSelector disables selected cards in the grid? 

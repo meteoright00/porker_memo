@@ -71,7 +71,7 @@ describe('pokerLogic Coverage', () => {
 
         it('Returns null if everyone else folded (loop exhaustion)', () => {
             // Only UTG left (everyone else in folded list)
-            const allButUtg = POSITIONS_6MAX.filter(p => p !== 'UTG');
+
             // If we ask for next after UTG, and everyone else is folded...
             // It should actually return UTG itself if logic allows wrapping to self,
             // OR if the loop logic prevents it.

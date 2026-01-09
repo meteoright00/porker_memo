@@ -61,7 +61,7 @@ export const HandWizard: React.FC<HandWizardProps> = ({ onSave }) => {
 
             // Auto-analyze tags when entering Result step
             if (nextStep.name === 'Result' && position) {
-                const autoTags = analyzeGameTags(actions, position);
+                const autoTags = analyzeGameTags(actions);
                 // Merge tags to avoid duplicates if navigating back/forth
                 setTags(prev => Array.from(new Set([...prev, ...autoTags])));
             }
@@ -140,7 +140,7 @@ export const HandWizard: React.FC<HandWizardProps> = ({ onSave }) => {
         if (currentPhaseActions.length === 0) {
             // Initial actor
             nextActorPos = getInitialActor(
-                currentStep.name as any,
+                currentStep.name as Action['phase'],
                 foldedPositions,
                 playerCount
             );
@@ -152,7 +152,7 @@ export const HandWizard: React.FC<HandWizardProps> = ({ onSave }) => {
             if (lastActorPos) {
                 nextActorPos = getNextActor(
                     lastActorPos,
-                    currentStep.name as any,
+                    currentStep.name as Action['phase'],
                     foldedPositions,
                     playerCount
                 );
@@ -186,7 +186,7 @@ export const HandWizard: React.FC<HandWizardProps> = ({ onSave }) => {
             if (resultStepIndex !== -1) {
                 // Auto-analyze tags before skip (similar to handleNext)
                 if (position) {
-                    const autoTags = analyzeGameTags(newActions, position);
+                    const autoTags = analyzeGameTags(newActions);
                     setTags(prev => Array.from(new Set([...prev, ...autoTags])));
                 }
                 setStep(resultStepIndex);

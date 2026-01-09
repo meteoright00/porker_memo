@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { HandRecordingPage } from './HandRecordingPage';
-import { HandRecord } from '@/types/hand';
+import { HandRecord, FilterCriteria } from '@/types/hand';
 import { HandRepository } from '@/data/HandRepository';
 import { act } from 'react';
 
-import { DataManagementService } from '@/services/DataManagementService';
+
 
 // Mock HandRepository
 vi.mock('@/data/HandRepository', () => ({
@@ -28,7 +28,7 @@ vi.mock('@/services/DataManagementService', () => ({
 
 // Mock HandFilter
 vi.mock('@/components/analysis/HandFilter', () => ({
-    HandFilter: ({ onFilterChange }: { onFilterChange: (c: any) => void }) => (
+    HandFilter: ({ onFilterChange }: { onFilterChange: (c: FilterCriteria) => void }) => (
         <button onClick={() => onFilterChange({ tags: ['TagA'] })}>
             Apply Filter
         </button>

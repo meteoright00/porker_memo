@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { HandDetail } from './HandDetail';
-import { HandRecord } from '@/types/hand';
+import { HandRecord, Action } from '@/types/hand';
 
 const mockHand: HandRecord = {
     uuid: 'test-uuid',
@@ -33,7 +33,7 @@ describe('HandDetail', () => {
             actions: [
                 { phase: 'Preflop', actor: 'Hero', type: 'Raise', amount: '2.5bb', isHero: true },
                 { phase: 'Preflop', actor: 'Villain', type: 'Call', isHero: false }
-            ] as any[] // weak cast for test simplicity
+            ] as Action[] // weak cast for test simplicity
         };
 
         render(<HandDetail hand={handWithActions} onClose={vi.fn()} />);

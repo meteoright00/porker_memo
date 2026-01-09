@@ -32,7 +32,7 @@ export const ActionInput: React.FC<ActionInputProps> = ({ onAddAction, phase, is
         if (isInstant) {
             onAddAction({
                 phase,
-                actor: isHero ? 'Hero' : 'Villain',
+                actor: (isHero ? 'Hero' : 'Villain') as Action['actor'],
                 isHero,
                 type,
                 amount: undefined,
@@ -58,7 +58,7 @@ export const ActionInput: React.FC<ActionInputProps> = ({ onAddAction, phase, is
         // construct and emit
         const action = {
             phase,
-            actor: isHero ? 'Hero' : 'Villain',
+            actor: (isHero ? 'Hero' : 'Villain') as Action['actor'],
             isHero,
             type: selectedType,
             amount: amount || undefined, // undefined if empty string
@@ -69,7 +69,7 @@ export const ActionInput: React.FC<ActionInputProps> = ({ onAddAction, phase, is
         // Action.isHero is boolean.
 
         // cast actor to match literal types if needed, but 'Hero' | 'Villain' is string.
-        onAddAction(action as any);
+        onAddAction(action);
         /*
         onAddAction({
             phase,

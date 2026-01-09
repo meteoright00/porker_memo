@@ -1,6 +1,6 @@
 import { Action } from '@/types/hand';
 
-export const analyzeGameTags = (actions: Action[], heroPosition: string): string[] => {
+export const analyzeGameTags = (actions: Action[]): string[] => {
     const tags: string[] = [];
 
     const preflopActions = actions.filter(a => a.phase === 'Preflop');
@@ -27,7 +27,7 @@ export const analyzeGameTags = (actions: Action[], heroPosition: string): string
 
     // Aggression Logic (Flop)
     if (flopActions.length > 0) {
-        const firstAction = flopActions[0];
+
 
         // C-Bet: Preflop Aggressor was Hero, Hero Bets Fop
         // Note: Check-Raise is NOT a C-Bet usually, but a C-Bet opportunity checked.

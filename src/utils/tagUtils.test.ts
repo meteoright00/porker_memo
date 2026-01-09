@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { analyzeGameTags } from './tagUtils';
-import { Action, HandRecord } from '@/types/hand';
+import { Action } from '@/types/hand';
 
 describe('tagUtils', () => {
     // Helper to create basic actions
@@ -25,7 +25,7 @@ describe('tagUtils', () => {
                 // Hero Call
                 createAction('Preflop', true, 'Call')
             ];
-            const tags = analyzeGameTags(actions, 'BB'); // Hero in BB
+            const tags = analyzeGameTags(actions); // Hero in BB
             expect(tags).toContain('Single Raised Pot');
         });
 
@@ -37,7 +37,7 @@ describe('tagUtils', () => {
                 createAction('Preflop', true, 'Raise', '9BB'), // Hero 3Bet
                 createAction('Preflop', false, 'Call')
             ];
-            const tags = analyzeGameTags(actions, 'BTN');
+            const tags = analyzeGameTags(actions);
             expect(tags).toContain('3Bet Pot');
             expect(tags).not.toContain('Single Raised Pot');
         });
@@ -49,7 +49,7 @@ describe('tagUtils', () => {
                 createAction('Preflop', false, 'Raise', '24BB'), // 4Bet
                 createAction('Preflop', true, 'Call')
             ];
-            const tags = analyzeGameTags(actions, 'BTN');
+            const tags = analyzeGameTags(actions);
             expect(tags).toContain('4Bet Pot');
             expect(tags).not.toContain('3Bet Pot');
         });
@@ -67,7 +67,7 @@ describe('tagUtils', () => {
                 // Flop
                 createAction('Flop', true, 'Bet', '33%')
             ];
-            const tags = analyzeGameTags(actions, 'BTN');
+            const tags = analyzeGameTags(actions);
             expect(tags).toContain('C-Bet');
         });
 
@@ -77,7 +77,7 @@ describe('tagUtils', () => {
                 createAction('Flop', false, 'Bet', '33%'),
                 createAction('Flop', true, 'Raise', '100%')
             ];
-            const tags = analyzeGameTags(actions, 'BB');
+            const tags = analyzeGameTags(actions);
             expect(tags).toContain('Check-Raise');
         });
 
@@ -91,7 +91,7 @@ describe('tagUtils', () => {
                 // Flop: Hero leads
                 createAction('Flop', true, 'Bet', '33%')
             ];
-            const tags = analyzeGameTags(actions, 'BB');
+            const tags = analyzeGameTags(actions);
             expect(tags).toContain('Donk Bet');
         });
     });
