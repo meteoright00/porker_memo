@@ -24,6 +24,7 @@ export const HandRecordSchema = z.object({
     winLoss: z.enum(['Win', 'Lose', 'Chop']),
     tags: z.array(z.string()),
     note: z.string().optional(),
+    tournamentId: z.number().optional(),
     createdAt: z.date(),
     updatedAt: z.date(),
 });
@@ -34,4 +35,5 @@ export interface FilterCriteria {
     startDate?: Date;
     endDate?: Date;
     tags?: string[];
+    tournamentId?: number;
 }

@@ -10,9 +10,10 @@ import { RotateCcw } from 'lucide-react';
 
 interface HandWizardProps {
     onSave: (hand: HandRecord) => void;
+    initialTags?: string[];
 }
 
-export const HandWizard: React.FC<HandWizardProps> = ({ onSave }) => {
+export const HandWizard: React.FC<HandWizardProps> = ({ onSave, initialTags }) => {
     const [step, setStep] = React.useState(0);
     const [holeCards, setHoleCards] = React.useState<string[]>([]);
     const [board, setBoard] = React.useState<string[]>([]);
@@ -23,7 +24,7 @@ export const HandWizard: React.FC<HandWizardProps> = ({ onSave }) => {
 
     // Result Step State
     const [winLoss, setWinLoss] = React.useState<'Win' | 'Lose' | 'Chop'>('Win');
-    const [tags, setTags] = React.useState<string[]>([]);
+    const [tags, setTags] = React.useState<string[]>(initialTags || []);
     const [note, setNote] = React.useState('');
 
     // Define steps
@@ -173,7 +174,7 @@ export const HandWizard: React.FC<HandWizardProps> = ({ onSave }) => {
     // Effect to set initial actor when entering an Actions step
     React.useEffect(() => {
         updateActorState(actions);
-    }, [step, position, playerCount]); // Depend on step to trigger on navigation
+    }, [step, position, playerCount, actions]); // Depend on step to trigger on navigation
 
     const handleAddAction = (action: Omit<Action, 'isHero'> & { isHero: boolean }) => {
         const newActions = [...actions, action as Action];
@@ -287,14 +288,14 @@ export const HandWizard: React.FC<HandWizardProps> = ({ onSave }) => {
                             <button
                                 data-testid="toggle-hero"
                                 className={`px-4 py-1 rounded-full text-sm font-bold ${isHero ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
-                                onClick={() => { console.log('Hero Toggle Clicked'); setIsHero(true); }}
+                                onClick={() => { setIsHero(true); }}
                             >
                                 Hero
                             </button>
                             <button
                                 data-testid="toggle-villain"
                                 className={`px-4 py-1 rounded-full text-sm font-bold ${!isHero ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700'}`}
-                                onClick={() => { console.log('Villain Toggle Clicked'); setIsHero(false); }}
+                                onClick={() => { setIsHero(false); }}
                             >
                                 Villain
                             </button>
@@ -302,7 +303,6 @@ export const HandWizard: React.FC<HandWizardProps> = ({ onSave }) => {
 
                         <div className="text-sm text-gray-600" data-testid="action-list">
                             {actions.filter(a => a.phase === currentStep.name).map((a, i) => {
-                                console.log('Rendering Action:', a);
                                 return (
                                     <div key={i} className={a.isHero ? 'text-blue-600' : 'text-red-600'}>
                                         {a.isHero ? a.actor : `${a.actor} (${a.position || '?'})`} {a.type} {a.amount}

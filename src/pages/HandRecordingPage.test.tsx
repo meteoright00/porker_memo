@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { HandRecordingPage } from './HandRecordingPage';
 import { HandRecord, FilterCriteria } from '@/types/hand';
 import { HandRepository } from '@/data/HandRepository';
@@ -82,21 +83,33 @@ describe('HandRecordingPage', () => {
     });
 
     it('4.1. List View: Displays empty state when no hands', async () => {
-        render(<HandRecordingPage />);
+        render(
+            <MemoryRouter>
+                <HandRecordingPage />
+            </MemoryRouter>
+        );
         await waitFor(() => expect(HandRepository.query).toHaveBeenCalled());
         expect(screen.getByText('Recorded Hands')).toBeInTheDocument();
         expect(screen.getByText('No hands recorded.')).toBeInTheDocument();
     });
 
     it('4.2. New Hand Trigger: Clicking button opens HandWizard', async () => {
-        render(<HandRecordingPage />);
+        render(
+            <MemoryRouter>
+                <HandRecordingPage />
+            </MemoryRouter>
+        );
         expect(screen.queryByText('Mock Wizard')).not.toBeInTheDocument();
         fireEvent.click(screen.getByText('New Hand'));
         expect(screen.getByText('Mock Wizard')).toBeInTheDocument();
     });
 
     it('4.3. Save Integration: Saving in Wizard adds to list and closes Wizard', async () => {
-        render(<HandRecordingPage />);
+        render(
+            <MemoryRouter>
+                <HandRecordingPage />
+            </MemoryRouter>
+        );
 
         // Mock query to return saved hand after save (simulating reload)
         vi.mocked(HandRepository.query).mockResolvedValue([mockHand]);
@@ -125,7 +138,11 @@ describe('HandRecordingPage', () => {
         });
 
         await act(async () => {
-            render(<HandRecordingPage />);
+            render(
+                <MemoryRouter>
+                    <HandRecordingPage />
+                </MemoryRouter>
+            );
         });
 
         // Check initial load (async)
@@ -144,7 +161,11 @@ describe('HandRecordingPage', () => {
 
     it('5.2. Detail Integration: Clicking hand opens Detail view', async () => {
         vi.mocked(HandRepository.query).mockResolvedValue([mockHand]);
-        render(<HandRecordingPage />);
+        render(
+            <MemoryRouter>
+                <HandRecordingPage />
+            </MemoryRouter>
+        );
 
         expect(await screen.findByText(/As, Ks/)).toBeInTheDocument();
 
@@ -159,7 +180,11 @@ describe('HandRecordingPage', () => {
     });
 
     it('5.3. Data Integration: Export button calls service', async () => {
-        render(<HandRecordingPage />);
+        render(
+            <MemoryRouter>
+                <HandRecordingPage />
+            </MemoryRouter>
+        );
 
         // Assume Export button is visible (e.g. in a Data section)
         expect(screen.getByText('Export JSON')).toBeInTheDocument();

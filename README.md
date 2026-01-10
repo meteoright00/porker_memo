@@ -22,6 +22,12 @@ Built for efficiency, it allows players to quickly record hand histories, tag im
 -   **Data Management:** Full JSON Import/Export for backup and migration.
 -   **Hand Deletion:** Remove unwanted or test records easily.
 
+### 🏆 Tournament Management
+-   **Session Tracking:** Create and manage multiple tournament sessions.
+-   **Chip Tracking:** Record stack sizes at each blind level.
+-   **Visual Charts:** Monitor chip stack progression and "M-value" over time with interactive charts.
+-   **Integrated Hand Recording:** Seamlessly switch between tournament tracking and hand recording, with auto-linked tournament context and tags.
+
 ### 📱 PWA & Offline First
 -   **Works Offline:** All data is stored locally using IndexedDB (Dexie.js).
 -   **Installable:** Can be installed on home screens as a native-like app.
@@ -34,6 +40,24 @@ Built for efficiency, it allows players to quickly record hand histories, tag im
 -   **Forms:** React Hook Form + Zod
 -   **Routing:** React Router DOM
 -   **Testing:** Vitest + React Testing Library
+
+## Project Structure
+
+```text
+src/
+├── components/     # UI Components
+│   ├── analysis/   # Hand Analysis Components
+│   ├── common/     # Shared Components (ErrorBoundary, etc.)
+│   ├── recording/  # Hand Recording Wizard
+│   ├── tournament/ # Tournament specific components
+│   └── ui/         # Shadcn UI primitives
+├── data/           # Data Layer (Dexie.js, Repositories)
+├── lib/            # Utilities (cn, etc.)
+├── pages/          # Application Pages
+├── services/       # Business Logic Services
+├── types/          # TypeScript Definitions
+└── utils/          # Helper Functions (Poker logic, Tagging)
+```
 
 ## Setup & Usage
 
@@ -98,6 +122,12 @@ MIT License
 -   **データ管理:** JSON形式での完全なインポート/エクスポートに対応しており、バックアップやデータ移行が可能です。
 -   **ハンド削除:** 不要な記録やテストデータを簡単に削除できます。
 
+### 🏆 トーナメント管理
+-   **セッション追跡:** 複数のトーナメントセッションを作成・管理できます。
+-   **チップ推移記録:** ブラインドレベルごとのスタックサイズを記録します。
+-   **視覚的チャート:** チップ量の推移や「M値」の変化をインタラクティブなチャートで確認できます。
+-   **ハンド記録との統合:** トーナメント管理とハンド記録をシームレスに行き来でき、トーナメント情報やタグが自動的に紐付けられます。
+
 ### 📱 PWA & オフラインファースト
 -   **オフライン動作:** すべてのデータは IndexedDB (Dexie.js) を使用してローカルに保存されます。
 -   **インストール可能:** PWAとしてホーム画面に追加し、ネイティブアプリのように使用できます。
@@ -110,6 +140,24 @@ MIT License
 -   **フォーム:** React Hook Form + Zod
 -   **ルーティング:** React Router DOM
 -   **テスト:** Vitest + React Testing Library
+
+## プロジェクト構造
+
+```text
+src/
+├── components/     # UIコンポーネント
+│   ├── analysis/   # ハンド分析コンポーネント
+│   ├── common/     # 共通コンポーネント (ErrorBoundaryなど)
+│   ├── recording/  # ハンド記録ウィザード
+│   ├── tournament/ # トーナメント関連コンポーネント
+│   └── ui/         # Shadcn UI プリミティブ
+├── data/           # データ層 (Dexie.js, Repositories)
+├── lib/            # ユーティリティ (cnなど)
+├── pages/          # アプリケーションページ
+├── services/       # ビジネスロジックサービス
+├── types/          # TypeScript型定義
+└── utils/          # ヘルパー関数 (ポーカーロジック, タグ付け)
+```
 
 ## セットアップと使用方法
 

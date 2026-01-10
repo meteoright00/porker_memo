@@ -53,19 +53,17 @@ export class HandRepository {
     static async query(criteria: FilterCriteria): Promise<HandRecord[]> {
         let collection = db.hands.toCollection();
 
-        if (criteria.startDate || criteria.endDate) {
+        if (criteria.startDate || criteria.endDate || criteria.tournamentId) {
             collection = collection.filter(hand => {
                 let matches = true;
                 if (criteria.startDate) {
                     matches = matches && hand.date >= criteria.startDate;
                 }
                 if (criteria.endDate) {
-                    // Include the end date fully (up to end of day if needed, but here assuming strict comparison)
-                    // Usually end date in filters implies inclusive.
-                    // For now strict comparison to simplified logic.
-                    // If user selects "Jan 1" to "Jan 31", simplified inputs usually are Date objects at 00:00.
-                    // So we probably want date <= endDate (inclusive).
                     matches = matches && hand.date <= criteria.endDate;
+                }
+                if (criteria.tournamentId) {
+                    matches = matches && hand.tournamentId === criteria.tournamentId;
                 }
                 return matches;
             });

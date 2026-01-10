@@ -1,34 +1,66 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import { HandRecord, FilterCriteria } from '@/types/hand';
 import { HandWizard } from '@/components/recording/HandWizard';
 import { HandRepository } from '@/data/HandRepository';
 import { HandFilter } from '@/components/analysis/HandFilter';
-
 import { HandDetail } from '@/components/analysis/HandDetail';
 import { DataManagementService } from '@/services/DataManagementService';
+import { TournamentRepository } from '@/data/TournamentRepository';
 
 export const HandRecordingPage: React.FC = () => {
     const [hands, setHands] = useState<HandRecord[]>([]);
     const [isWizardOpen, setIsWizardOpen] = useState(false);
     const [filterCriteria, setFilterCriteria] = useState<FilterCriteria>({});
     const [selectedHand, setSelectedHand] = useState<HandRecord | null>(null);
-
     const [availableTags, setAvailableTags] = useState<string[]>([]);
+    const [tournamentName, setTournamentName] = useState<string | undefined>(undefined);
 
-    const loadData = () => {
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const tournamentIdParam = searchParams.get('tournamentId');
+    const tournamentId = tournamentIdParam ? parseInt(tournamentIdParam) : undefined;
+
+    const loadData = React.useCallback(() => {
         HandRepository.query(filterCriteria).then(setHands);
         HandRepository.getUniqueTags().then(setAvailableTags);
-    };
+    }, [filterCriteria]);
 
     // Load hands and tags when filter changes
     useEffect(() => {
         loadData();
-    }, [filterCriteria]);
+    }, [loadData]);
+
+    // Auto-open wizard if tournamentId is present
+    useEffect(() => {
+        if (tournamentId) {
+            setIsWizardOpen(true);
+            setFilterCriteria(prev => ({ ...prev, tournamentId }));
+
+            // Fetch tournament name for auto-tagging
+            TournamentRepository.getById(tournamentId).then(tournament => {
+                if (tournament) {
+                    setTournamentName(tournament.name);
+                }
+            });
+        }
+    }, [tournamentId]);
 
     const handleSaveHand = async (hand: HandRecord) => {
-        await HandRepository.save(hand);
-        loadData();
-        setIsWizardOpen(false);
+        const handToSave = { ...hand };
+        if (tournamentId) {
+            handToSave.tournamentId = tournamentId;
+        }
+        await HandRepository.save(handToSave);
+
+        if (tournamentId) {
+            navigate(`/tournaments/${tournamentId}`);
+        } else {
+            loadData();
+            setIsWizardOpen(false);
+        }
     };
 
     const handleFilterChange = (criteria: FilterCriteria) => {
@@ -66,14 +98,21 @@ export const HandRecordingPage: React.FC = () => {
         setSelectedHand(null);
     };
 
-    // Extract all unique tags from current hands? 
-    // Issue: If we filter, we lose tags. Ideally we need all tags.
-    // For now, let's just use a hardcoded list or derived from current view (suboptimal).
-    // Or fetch all hands once for tags?
-    // Let's rely on empty tags or hardcoded for MVP test functionality.
-
     return (
         <div className="p-4">
+            <div className="mb-4">
+                {tournamentId ? (
+                    <Button variant="ghost" onClick={() => navigate(`/tournaments/${tournamentId}`)} className="p-0 hover:bg-transparent">
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        トーナメントに戻る
+                    </Button>
+                ) : (
+                    <Button variant="ghost" onClick={() => navigate('/')} className="p-0 hover:bg-transparent">
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        ダッシュボードに戻る
+                    </Button>
+                )}
+            </div>
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-2xl font-bold">Recorded Hands</h1>
                 <div className="flex gap-2">
@@ -94,11 +133,14 @@ export const HandRecordingPage: React.FC = () => {
 
             {isWizardOpen ? (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded shadow-lg max-w-2xl w-full">
+                    <div className="bg-white rounded shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                         <div className="flex justify-end p-2">
                             <button onClick={() => setIsWizardOpen(false)} className="text-gray-500">Close</button>
                         </div>
-                        <HandWizard onSave={handleSaveHand} />
+                        <HandWizard
+                            onSave={handleSaveHand}
+                            initialTags={tournamentName ? [tournamentName] : []}
+                        />
                     </div>
                 </div>
             ) : selectedHand ? (
