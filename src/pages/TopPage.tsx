@@ -6,7 +6,7 @@ import { FileText, Trophy } from 'lucide-react';
 const TopPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-gray-100 p-4 flex flex-col items-center justify-center space-y-8">
-            <h1 className="text-3xl font-bold text-gray-800">ポーカーの記録</h1>
+            <h1 className="text-3xl font-bold text-gray-800">Poker Note</h1>
 
             <div className="grid grid-cols-1 gap-6 w-full max-w-md">
                 <Link to="/record" className="block">

@@ -11,8 +11,8 @@ export default defineConfig({
             registerType: 'autoUpdate',
             includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
             manifest: {
-                name: 'Porker Memo',
-                short_name: 'PorkerMemo',
+                name: 'Poker Note',
+                short_name: 'PokerNote',
                 description: 'Offline-first Poker Hand Recorder',
                 theme_color: '#ffffff',
                 icons: [

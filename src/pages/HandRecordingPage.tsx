@@ -101,7 +101,7 @@ export const HandRecordingPage: React.FC = () => {
 
     return (
         <Layout>
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                 <div className="flex items-center gap-4">
                     {tournamentId ? (
                         <Button variant="outline" onClick={() => navigate(`/tournaments/${tournamentId}`)} className="shadow-sm">
@@ -116,7 +116,7 @@ export const HandRecordingPage: React.FC = () => {
                     )}
                     <h1 className="text-2xl font-bold">Recorded Hands</h1>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full md:w-auto">
                     <Button variant="outline" size="sm" onClick={handleExport}>Export JSON</Button>
                     <label>
                         <Button variant="outline" size="sm" asChild>

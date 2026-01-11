@@ -12,7 +12,7 @@ describe('TopPage', () => {
             </MemoryRouter>
         );
 
-        expect(screen.getByText('ポーカーの記録')).toBeInTheDocument();
+        expect(screen.getByText('Poker Note')).toBeInTheDocument();
         expect(screen.getByText('ハンド記録 (単発)')).toBeInTheDocument();
         expect(screen.getByText('トーナメント記録')).toBeInTheDocument();
     });
