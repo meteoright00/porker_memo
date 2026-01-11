@@ -8,6 +8,7 @@ import { ArrowLeft } from 'lucide-react';
 import { ChipRecordForm } from '@/components/tournament/ChipRecordForm';
 import { ChipHistoryList } from '@/components/tournament/ChipHistoryList';
 import { TournamentChart } from '@/components/tournament/TournamentChart';
+import { Layout } from '@/components/layout/Layout';
 
 const TournamentDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -49,7 +50,7 @@ const TournamentDetailPage: React.FC = () => {
     const lastRecord = chipRecords.length > 0 ? chipRecords[chipRecords.length - 1] : undefined;
 
     return (
-        <div className="container mx-auto p-4 max-w-4xl">
+        <Layout>
             <div className="mb-4 flex justify-between">
                 <Link to="/tournaments">
                     <Button variant="outline" size="sm" className="shadow-sm group">
@@ -123,7 +124,7 @@ const TournamentDetailPage: React.FC = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </Layout>
     );
 };
 

@@ -1,7 +1,10 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import { TournamentForm } from '@/components/tournament/TournamentForm';
 import { TournamentRepository } from '@/data/TournamentRepository';
+import { Layout } from '@/components/layout/Layout';
 
 const TournamentCreatePage: React.FC = () => {
     const navigate = useNavigate();
@@ -19,10 +22,17 @@ const TournamentCreatePage: React.FC = () => {
     };
 
     return (
-        <div className="container mx-auto p-4 max-w-lg">
-            <h1 className="text-2xl font-bold mb-6">トーナメント作成</h1>
+        <Layout className="max-w-lg">
+            <div className="flex items-center gap-4 mb-6">
+                <Link to="/tournaments">
+                    <Button variant="outline" size="icon" className="shadow-sm">
+                        <ArrowLeft className="h-5 w-5" />
+                    </Button>
+                </Link>
+                <h1 className="text-2xl font-bold">トーナメント作成</h1>
+            </div>
             <TournamentForm onSubmit={handleSubmit} />
-        </div>
+        </Layout>
     );
 };
 

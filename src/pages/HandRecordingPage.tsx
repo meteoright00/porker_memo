@@ -9,6 +9,7 @@ import { HandFilter } from '@/components/analysis/HandFilter';
 import { HandDetail } from '@/components/analysis/HandDetail';
 import { DataManagementService } from '@/services/DataManagementService';
 import { TournamentRepository } from '@/data/TournamentRepository';
+import { Layout } from '@/components/layout/Layout';
 
 export const HandRecordingPage: React.FC = () => {
     const [hands, setHands] = useState<HandRecord[]>([]);
@@ -99,22 +100,22 @@ export const HandRecordingPage: React.FC = () => {
     };
 
     return (
-        <div className="p-4">
-            <div className="mb-4">
-                {tournamentId ? (
-                    <Button variant="outline" onClick={() => navigate(`/tournaments/${tournamentId}`)} className="shadow-sm">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        トーナメントに戻る
-                    </Button>
-                ) : (
-                    <Button variant="outline" onClick={() => navigate('/')} className="shadow-sm">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        ダッシュボードに戻る
-                    </Button>
-                )}
-            </div>
-            <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">Recorded Hands</h1>
+        <Layout>
+            <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center gap-4">
+                    {tournamentId ? (
+                        <Button variant="outline" onClick={() => navigate(`/tournaments/${tournamentId}`)} className="shadow-sm">
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            トーナメントに戻る
+                        </Button>
+                    ) : (
+                        <Button variant="outline" onClick={() => navigate('/')} className="shadow-sm">
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            ダッシュボードに戻る
+                        </Button>
+                    )}
+                    <h1 className="text-2xl font-bold">Recorded Hands</h1>
+                </div>
                 <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={handleExport}>Export JSON</Button>
                     <label>
@@ -178,6 +179,6 @@ export const HandRecordingPage: React.FC = () => {
                     </Button>
                 </>
             )}
-        </div>
+        </Layout>
     );
 };

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TournamentRepository } from '@/data/TournamentRepository';
 import { Tournament } from '@/types/tournament';
+import { Layout } from '@/components/layout/Layout';
 
 const TournamentListPage: React.FC = () => {
     const [tournaments, setTournaments] = useState<Tournament[]>([]);
@@ -27,7 +28,7 @@ const TournamentListPage: React.FC = () => {
     }
 
     return (
-        <div className="container mx-auto p-4 max-w-2xl">
+        <Layout>
             <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-4">
                     <Link to="/">
@@ -74,7 +75,7 @@ const TournamentListPage: React.FC = () => {
                     ))}
                 </div>
             )}
-        </div>
+        </Layout>
     );
 };
 
