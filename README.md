@@ -1,8 +1,8 @@
-# Porker Memo
+# Poker Note
 
-**[English]** | [日本語](#porker-memo-日本語)
+**[English]** | [日本語](#poker-note-日本語)
 
-**Porker Memo** is a mobile-first, offline-ready Poker (Texas Hold'em) hand recording and analysis application (PWA).  
+**Poker Note** is a mobile-first, offline-ready Poker (Texas Hold'em) hand recording and analysis application (PWA).  
 Built for efficiency, it allows players to quickly record hand histories, tag important spots, and review their play sessions without needing an internet connection.
 
 ## Key Features
@@ -102,9 +102,9 @@ MIT License
 
 ---
 
-# Porker Memo (日本語)
+# Poker Note (日本語)
 
-**Porker Memo** は、モバイルファーストでオフライン動作に対応した、ポーカー（テキサスホールデム）のハンド記録・分析アプリケーション (PWA) です。  
+**Poker Note** は、モバイルファーストでオフライン動作に対応した、ポーカー（テキサスホールデム）のハンド記録・分析アプリケーション (PWA) です。
 効率性を重視して設計されており、プレイヤーはインターネット接続なしでプレイ履歴を素早く記録し、重要な場面にタグを付け、プレイセッションを見直すことができます。
 
 ## 主な機能
