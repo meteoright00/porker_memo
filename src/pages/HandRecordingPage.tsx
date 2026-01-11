@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import { HandRecord, FilterCriteria } from '@/types/hand';
 import { HandWizard } from '@/components/recording/HandWizard';
 import { HandRepository } from '@/data/HandRepository';
@@ -102,12 +102,12 @@ export const HandRecordingPage: React.FC = () => {
         <div className="p-4">
             <div className="mb-4">
                 {tournamentId ? (
-                    <Button variant="ghost" onClick={() => navigate(`/tournaments/${tournamentId}`)} className="p-0 hover:bg-transparent">
+                    <Button variant="outline" onClick={() => navigate(`/tournaments/${tournamentId}`)} className="shadow-sm">
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         トーナメントに戻る
                     </Button>
                 ) : (
-                    <Button variant="ghost" onClick={() => navigate('/')} className="p-0 hover:bg-transparent">
+                    <Button variant="outline" onClick={() => navigate('/')} className="shadow-sm">
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         ダッシュボードに戻る
                     </Button>
@@ -116,9 +116,11 @@ export const HandRecordingPage: React.FC = () => {
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-2xl font-bold">Recorded Hands</h1>
                 <div className="flex gap-2">
-                    <button onClick={handleExport} className="border px-2 py-1 rounded text-sm">Export JSON</button>
-                    <label className="border px-2 py-1 rounded text-sm cursor-pointer">
-                        Import JSON
+                    <Button variant="outline" size="sm" onClick={handleExport}>Export JSON</Button>
+                    <label>
+                        <Button variant="outline" size="sm" asChild>
+                            <span className="cursor-pointer">Import JSON</span>
+                        </Button>
                         <input type="file" accept=".json" onChange={handleImport} className="hidden" />
                     </label>
                 </div>
@@ -166,12 +168,14 @@ export const HandRecordingPage: React.FC = () => {
                             ))
                         )}
                     </div>
-                    <button
-                        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+                    <Button
+                        className="mt-4 w-full md:w-auto shadow-md"
                         onClick={() => setIsWizardOpen(true)}
+                        size="lg"
                     >
+                        <Plus className="mr-2 h-5 w-5" />
                         New Hand
-                    </button>
+                    </Button>
                 </>
             )}
         </div>

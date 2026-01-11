@@ -52,12 +52,12 @@ const TournamentDetailPage: React.FC = () => {
         <div className="container mx-auto p-4 max-w-4xl">
             <div className="mb-4 flex justify-between">
                 <Link to="/tournaments">
-                    <Button variant="ghost" size="sm">
-                        <ArrowLeft className="mr-2 h-4 w-4" /> 一覧に戻る
+                    <Button variant="outline" size="sm" className="shadow-sm group">
+                        <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" /> 一覧に戻る
                     </Button>
                 </Link>
                 <Link to={`/record?tournamentId=${tournament.id}`}>
-                    <Button disabled={tournament.status !== 'active'}>
+                    <Button disabled={tournament.status !== 'active'} size="default">
                         ハンドを記録する
                     </Button>
                 </Link>

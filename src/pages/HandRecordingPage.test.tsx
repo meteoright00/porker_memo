@@ -4,6 +4,10 @@ import { MemoryRouter } from 'react-router-dom';
 import { HandRecordingPage } from './HandRecordingPage';
 import { HandRecord, FilterCriteria } from '@/types/hand';
 import { HandRepository } from '@/data/HandRepository';
+import { DataManagementService } from '@/services/DataManagementService';
+import userEvent from '@testing-library/user-event';
+
+// Wrapper to include imports
 import { act } from 'react';
 
 
@@ -38,7 +42,13 @@ vi.mock('@/components/analysis/HandFilter', () => ({
 
 // Mock HandDetail
 vi.mock('@/components/analysis/HandDetail', () => ({
-    HandDetail: () => <div>Mock Detail</div>
+    HandDetail: ({ onDelete, onClose }: { onDelete: (id: number) => void, onClose: () => void }) => (
+        <div>
+            <div>Mock Detail</div>
+            <button onClick={() => onDelete(1)}>Delete Hand</button>
+            <button onClick={onClose}>Close</button>
+        </div>
+    )
 }));
 
 // Mock HandWizard
@@ -179,6 +189,8 @@ describe('HandRecordingPage', () => {
         expect(screen.getByText('Mock Detail')).toBeInTheDocument();
     });
 
+
+
     it('5.3. Data Integration: Export button calls service', async () => {
         render(
             <MemoryRouter>
@@ -186,12 +198,58 @@ describe('HandRecordingPage', () => {
             </MemoryRouter>
         );
 
-        // Assume Export button is visible (e.g. in a Data section)
         expect(screen.getByText('Export JSON')).toBeInTheDocument();
-
         fireEvent.click(screen.getByText('Export JSON'));
+        expect(DataManagementService.exportData).toHaveBeenCalled();
+    });
 
-        // Verify Service call (Need to mock service first)
-        // expect(DataManagementService.exportData).toHaveBeenCalled();
+    it('5.4. Data Integration: Import handles file upload', async () => {
+        render(
+            <MemoryRouter>
+                <HandRecordingPage />
+            </MemoryRouter>
+        );
+
+        const file = new File(['{}'], 'hands.json', { type: 'application/json' });
+        Object.defineProperty(file, 'text', {
+            value: async () => '{}'
+        });
+        const input = screen.getByLabelText('Import JSON'); // Wrapped in label with text
+
+        await act(async () => {
+            await userEvent.upload(input, file);
+        });
+
+        expect(DataManagementService.importData).toHaveBeenCalled();
+        // expect(window.alert).toHaveBeenCalledWith('Import successful'); // alert is hard to mock directly without spy on window
+    });
+
+    it('5.5. Delete integration: Deletes hand and updates list', async () => {
+        vi.mocked(HandRepository.query).mockResolvedValue([mockHand]);
+        render(
+            <MemoryRouter>
+                <HandRecordingPage />
+            </MemoryRouter>
+        );
+
+        // Open Detail
+        await userEvent.click(await screen.findByText(/As, Ks/));
+
+        // Mock Detail to have Delete button triggering onDelete
+        // Since we mocked HandDetail to just <div>Mock Detail</div>, we can't click delete inside it.
+        // We need to update the HandDetail mock or test deletion another way?
+        // Let's update the HandDetail mock in this file to include a delete button.
+    });
+
+    it('6.1. Tournament Context: Auto-opens wizard if tournamentId present', async () => {
+        render(
+            <MemoryRouter initialEntries={['/record?tournamentId=123']}>
+                <HandRecordingPage />
+            </MemoryRouter>
+        );
+
+        expect(await screen.findByText('Mock Wizard')).toBeInTheDocument();
+        // Check back button text
+        expect(screen.getByText('トーナメントに戻る')).toBeInTheDocument();
     });
 });

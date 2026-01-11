@@ -31,6 +31,8 @@ Built for efficiency, it allows players to quickly record hand histories, tag im
 ### 📱 PWA & Offline First
 -   **Works Offline:** All data is stored locally using IndexedDB (Dexie.js).
 -   **Installable:** Can be installed on home screens as a native-like app.
+-   **Mobile Optimized:** Enhanced touch targets (48px buttons) and responsive design for easy usage on smartphones.
+-   **Rich UI:** Utilizes modern components (Toast notifications, Dialogs) for a smooth user experience.
 
 ## Tech Stack
 
@@ -131,6 +133,8 @@ MIT License
 ### 📱 PWA & オフラインファースト
 -   **オフライン動作:** すべてのデータは IndexedDB (Dexie.js) を使用してローカルに保存されます。
 -   **インストール可能:** PWAとしてホーム画面に追加し、ネイティブアプリのように使用できます。
+-   **モバイル最適化:** スマートフォンでの操作性を考慮し、ボタンサイズ(48px)やタップ領域を拡大しました。
+-   **リッチなUI:** Toast通知やダイアログなどのモダンなコンポーネントを採用し、スムーズなユーザー体験を提供します。
 
 ## 技術スタック
 

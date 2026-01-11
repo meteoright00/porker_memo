@@ -349,7 +349,7 @@ export const HandWizard: React.FC<HandWizardProps> = ({ onSave, initialTags }) =
                 )}
             </div>
 
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-2" data-testid="wizard-nav">
                 {step > 0 && (
                     <button
                         className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"

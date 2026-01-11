@@ -31,15 +31,15 @@ const TournamentListPage: React.FC = () => {
             <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-4">
                     <Link to="/">
-                        <Button variant="ghost" size="icon">
+                        <Button variant="outline" size="icon" className="shadow-sm">
                             <ArrowLeft className="h-5 w-5" />
                         </Button>
                     </Link>
                     <h1 className="text-2xl font-bold">トーナメント一覧</h1>
                 </div>
                 <Link to="/tournaments/new">
-                    <Button size="sm">
-                        <Plus className="mr-2 h-4 w-4" /> 新規作成
+                    <Button size="default" className="shadow-sm">
+                        <Plus className="mr-2 h-5 w-5" /> 新規作成
                     </Button>
                 </Link>
             </div>

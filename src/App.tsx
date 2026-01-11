@@ -7,6 +7,8 @@ import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import TournamentCreatePage from './pages/TournamentCreatePage';
 import TournamentDetailPage from './pages/TournamentDetailPage';
 
+import { Toaster } from '@/components/ui/toaster';
+
 function App() {
     return (
         <ErrorBoundary>
@@ -18,6 +20,7 @@ function App() {
                     <Route path="/tournaments/new" element={<TournamentCreatePage />} />
                     <Route path="/tournaments/:id" element={<TournamentDetailPage />} />
                 </Routes>
+                <Toaster />
             </div>
         </ErrorBoundary>
     )

@@ -42,4 +42,32 @@ describe('ChipRecordRepository', () => {
         expect(t1Records.map(r => r.chipCount)).toContain(10000);
         expect(t1Records.map(r => r.chipCount)).toContain(12000);
     });
+
+    it('should update an existing chip record', async () => {
+        const record: ChipRecord = {
+            tournamentId: 1,
+            chipCount: 10000,
+            sb: 100,
+            bb: 200,
+            timestamp: new Date(),
+        };
+        const id = await ChipRecordRepository.save(record);
+
+        // Fetch to get the object (Dexie might modify it or we need to construct it with id)
+        // Since we don't have getById, we create an object with id
+        const toUpdate = { ...record, id, chipCount: 20000 };
+
+        await ChipRecordRepository.save(toUpdate);
+
+        const records = await ChipRecordRepository.getByTournamentId(1);
+        expect(records[0].chipCount).toBe(20000);
+    });
+
+    it('should retrieve all chip records', async () => {
+        const r1: ChipRecord = { tournamentId: 1, chipCount: 100, sb: 10, bb: 20, timestamp: new Date() };
+        await ChipRecordRepository.save(r1);
+
+        const all = await ChipRecordRepository.getAll();
+        expect(all).toHaveLength(1);
+    });
 });
