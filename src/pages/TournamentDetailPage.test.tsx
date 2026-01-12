@@ -9,6 +9,16 @@ import { ChipRecordRepository } from '@/data/ChipRecordRepository';
 vi.mock('@/data/TournamentRepository');
 vi.mock('@/data/ChipRecordRepository');
 
+// Mock Navigation
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+    const actual = await vi.importActual('react-router-dom');
+    return {
+        ...actual,
+        useNavigate: () => mockNavigate,
+    };
+});
+
 describe('TournamentDetailPage', () => {
     it('renders tournament details', async () => {
         (TournamentRepository.getById as any).mockResolvedValue({
@@ -113,5 +123,73 @@ describe('TournamentDetailPage', () => {
         expect(screen.getByText('完了')).toBeInTheDocument();
         expect(screen.queryByText('終了する')).not.toBeInTheDocument();
         expect(screen.getByText(/記録できません/)).toBeInTheDocument();
+    });
+
+    it('deletes tournament when confirmed (only if completed)', async () => {
+        const mockDelete = vi.fn();
+        (TournamentRepository.getById as any).mockResolvedValue({
+            id: 3,
+            name: 'To Delete',
+            status: 'completed', // Must be completed to delete
+            startDate: new Date(),
+            startChips: 30000
+        });
+        (TournamentRepository.delete as any).mockImplementation(mockDelete);
+        (ChipRecordRepository.getByTournamentId as any).mockResolvedValue([]);
+
+        // Mock confirm
+        const confirmSpy = vi.spyOn(window, 'confirm');
+        confirmSpy.mockImplementation(() => true);
+
+        render(
+            <MemoryRouter initialEntries={['/tournaments/3']}>
+                <Routes>
+                    <Route path="/tournaments/:id" element={<TournamentDetailPage />} />
+                </Routes>
+            </MemoryRouter>
+        );
+
+        await waitFor(() => {
+            expect(screen.getByText('To Delete')).toBeInTheDocument();
+        });
+
+        const deleteButton = screen.getByLabelText('削除');
+        expect(deleteButton).not.toBeDisabled();
+
+        deleteButton.click();
+
+        await waitFor(() => {
+            expect(confirmSpy).toHaveBeenCalled();
+            expect(mockDelete).toHaveBeenCalledWith(3);
+            expect(mockNavigate).toHaveBeenCalledWith('/tournaments');
+        });
+
+        confirmSpy.mockRestore();
+    });
+
+    it('disable delete button when active', async () => {
+        (TournamentRepository.getById as any).mockResolvedValue({
+            id: 4,
+            name: 'Active No Delete',
+            status: 'active',
+            startDate: new Date(),
+            startChips: 30000
+        });
+        (ChipRecordRepository.getByTournamentId as any).mockResolvedValue([]);
+
+        render(
+            <MemoryRouter initialEntries={['/tournaments/4']}>
+                <Routes>
+                    <Route path="/tournaments/:id" element={<TournamentDetailPage />} />
+                </Routes>
+            </MemoryRouter>
+        );
+
+        await waitFor(() => {
+            expect(screen.getByText('Active No Delete')).toBeInTheDocument();
+        });
+
+        const deleteButton = screen.getByLabelText('削除');
+        expect(deleteButton).toBeDisabled();
     });
 });

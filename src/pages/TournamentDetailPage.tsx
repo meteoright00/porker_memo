@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { TournamentRepository } from '@/data/TournamentRepository';
 import { ChipRecordRepository } from '@/data/ChipRecordRepository';
 import { Tournament, ChipRecord } from '@/types/tournament';
@@ -12,6 +12,7 @@ import { Layout } from '@/components/layout/Layout';
 
 const TournamentDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
     const [tournament, setTournament] = useState<Tournament | null>(null);
     const [chipRecords, setChipRecords] = useState<ChipRecord[]>([]);
     const [loading, setLoading] = useState(true);
@@ -88,6 +89,20 @@ const TournamentDetailPage: React.FC = () => {
                             終了する
                         </Button>
                     )}
+                    <Button
+                        variant="destructive"
+                        size="sm"
+                        aria-label="削除"
+                        disabled={tournament.status === 'active'}
+                        onClick={async () => {
+                            if (confirm('本当に削除しますか？この操作は取り消せません。')) {
+                                await TournamentRepository.delete(tournament.id!);
+                                navigate('/tournaments');
+                            }
+                        }}
+                    >
+                        削除
+                    </Button>
                 </div>
             </div>
 
