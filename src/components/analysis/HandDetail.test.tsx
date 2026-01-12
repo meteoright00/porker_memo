@@ -42,4 +42,39 @@ describe('HandDetail', () => {
         expect(screen.getByText('2.5bb')).toBeInTheDocument();
         expect(screen.getByText('Call')).toBeInTheDocument();
     });
+    it('3.3. Callbacks: Handles delete with confirmation', async () => {
+        const mockOnDelete = vi.fn();
+        const handWithId = { ...mockHand, id: 123 };
+
+        // Mock confirm
+        const confirmSpy = vi.spyOn(window, 'confirm');
+        confirmSpy.mockImplementation(() => true);
+
+        render(<HandDetail hand={handWithId} onClose={vi.fn()} onDelete={mockOnDelete} />);
+
+        const deleteBtn = screen.getByText('Delete');
+        deleteBtn.click();
+
+        expect(confirmSpy).toHaveBeenCalled();
+        expect(mockOnDelete).toHaveBeenCalledWith(123);
+
+        confirmSpy.mockRestore();
+    });
+
+    it('3.4. Callbacks: Cancels delete', async () => {
+        const mockOnDelete = vi.fn();
+        const handWithId = { ...mockHand, id: 123 };
+
+        const confirmSpy = vi.spyOn(window, 'confirm');
+        confirmSpy.mockImplementation(() => false); // Cancel
+
+        render(<HandDetail hand={handWithId} onClose={vi.fn()} onDelete={mockOnDelete} />);
+
+        screen.getByText('Delete').click();
+
+        expect(confirmSpy).toHaveBeenCalled();
+        expect(mockOnDelete).not.toHaveBeenCalled();
+
+        confirmSpy.mockRestore();
+    });
 });

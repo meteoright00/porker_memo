@@ -9,6 +9,7 @@ import { ChipRecordForm } from '@/components/tournament/ChipRecordForm';
 import { ChipHistoryList } from '@/components/tournament/ChipHistoryList';
 import { TournamentChart } from '@/components/tournament/TournamentChart';
 import { Layout } from '@/components/layout/Layout';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const TournamentDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -16,6 +17,7 @@ const TournamentDetailPage: React.FC = () => {
     const [tournament, setTournament] = useState<Tournament | null>(null);
     const [chipRecords, setChipRecords] = useState<ChipRecord[]>([]);
     const [loading, setLoading] = useState(true);
+    const [editingRecord, setEditingRecord] = useState<ChipRecord | null>(null);
 
     const fetchData = async () => {
         if (!id) return;
@@ -43,6 +45,25 @@ const TournamentDetailPage: React.FC = () => {
             timestamp: new Date(),
         });
         fetchData(); // Refresh list
+    };
+
+    const handleDeleteRecord = async (record: ChipRecord) => {
+        if (confirm('この記録を削除しますか？')) {
+            await ChipRecordRepository.delete(record.id!);
+            fetchData();
+        }
+    };
+
+    const handleUpdateRecord = async (values: { chipCount: number; sb: number; bb: number }) => {
+        if (!editingRecord || !tournament) return;
+        await ChipRecordRepository.save({
+            ...editingRecord,
+            chipCount: values.chipCount,
+            sb: values.sb,
+            bb: values.bb,
+        });
+        setEditingRecord(null);
+        fetchData();
     };
 
     if (loading) return <div className="p-4">Loading...</div>;
@@ -135,10 +156,30 @@ const TournamentDetailPage: React.FC = () => {
 
                     <div className="bg-white p-4 rounded-lg border shadow-sm">
                         <h2 className="text-lg font-semibold mb-4">履歴</h2>
-                        <ChipHistoryList records={chipRecords} startChips={tournament.startChips} />
+                        <ChipHistoryList
+                            records={chipRecords}
+                            startChips={tournament.startChips}
+                            onEdit={tournament.status === 'active' ? setEditingRecord : undefined}
+                            onDelete={tournament.status === 'active' ? handleDeleteRecord : undefined}
+                        />
                     </div>
                 </div>
             </div>
+
+            <Dialog open={!!editingRecord} onOpenChange={(open) => !open && setEditingRecord(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>記録の修正</DialogTitle>
+                    </DialogHeader>
+                    {editingRecord && (
+                        <ChipRecordForm
+                            initialValues={editingRecord}
+                            onSubmit={handleUpdateRecord}
+                            submitLabel="更新"
+                        />
+                    )}
+                </DialogContent>
+            </Dialog>
         </Layout>
     );
 };

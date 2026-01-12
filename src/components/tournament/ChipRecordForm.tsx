@@ -25,25 +25,38 @@ type FormValues = z.infer<typeof formSchema>;
 interface ChipRecordFormProps {
     onSubmit: (values: FormValues) => void;
     lastRecord?: ChipRecord;
+    initialValues?: ChipRecord;
+    submitLabel?: string;
 }
 
-export const ChipRecordForm: React.FC<ChipRecordFormProps> = ({ onSubmit, lastRecord }) => {
+export const ChipRecordForm: React.FC<ChipRecordFormProps> = ({ onSubmit, lastRecord, initialValues, submitLabel = '記録' }) => {
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema) as any,
         defaultValues: {
-            chipCount: undefined,
-            sb: 100,
-            bb: 200,
+            chipCount: initialValues?.chipCount,
+            sb: initialValues?.sb ?? 100,
+            bb: initialValues?.bb ?? 200,
         },
     });
 
-    // Update default values when lastRecord changes
+    // Update default values when lastRecord changes, strictly for new entries (no initialValues)
     useEffect(() => {
-        if (lastRecord) {
+        if (!initialValues && lastRecord) {
             form.setValue('sb', lastRecord.sb);
             form.setValue('bb', lastRecord.bb);
         }
-    }, [lastRecord, form]);
+    }, [lastRecord, form, initialValues]);
+
+    // Update form if initialValues change (e.g. switching edit target)
+    useEffect(() => {
+        if (initialValues) {
+            form.reset({
+                chipCount: initialValues.chipCount,
+                sb: initialValues.sb,
+                bb: initialValues.bb,
+            });
+        }
+    }, [initialValues, form]);
 
     return (
         <Form {...form}>
@@ -89,7 +102,7 @@ export const ChipRecordForm: React.FC<ChipRecordFormProps> = ({ onSubmit, lastRe
                         )}
                     />
                 </div>
-                <Button type="submit" className="w-full">記録</Button>
+                <Button type="submit" className="w-full">{submitLabel}</Button>
             </form>
         </Form>
     );

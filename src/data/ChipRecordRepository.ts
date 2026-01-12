@@ -23,4 +23,8 @@ export class ChipRecordRepository {
     static async getAll(): Promise<ChipRecord[]> {
         return await db.chipRecords.toArray();
     }
+
+    static async delete(id: number): Promise<void> {
+        await db.chipRecords.delete(id);
+    }
 }

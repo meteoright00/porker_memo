@@ -10,12 +10,17 @@ import {
     TableRow,
 } from '@/components/ui/table';
 
+import { Trash2, Pencil } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
 interface ChipHistoryListProps {
     records: ChipRecord[];
     startChips: number;
+    onEdit?: (record: ChipRecord) => void;
+    onDelete?: (record: ChipRecord) => void;
 }
 
-export const ChipHistoryList: React.FC<ChipHistoryListProps> = ({ records, startChips }) => {
+export const ChipHistoryList: React.FC<ChipHistoryListProps> = ({ records, startChips, onEdit, onDelete }) => {
     // Helper to calculate diff
     const getDiff = (index: number) => {
         const current = records[index].chipCount;
@@ -32,6 +37,7 @@ export const ChipHistoryList: React.FC<ChipHistoryListProps> = ({ records, start
                     <TableHead>SB / BB</TableHead>
                     <TableHead>チップ量</TableHead>
                     <TableHead>増減</TableHead>
+                    <TableHead className="w-[100px]">操作</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -54,6 +60,32 @@ export const ChipHistoryList: React.FC<ChipHistoryListProps> = ({ records, start
                                     : ''
                         }>
                             {getDiff(index)}
+                        </TableCell>
+                        <TableCell>
+                            <div className="flex gap-2">
+                                {onEdit && (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => onEdit(record)}
+                                        className="h-8 w-8 text-gray-500 hover:text-blue-600"
+                                        aria-label="記録を編集"
+                                    >
+                                        <Pencil className="h-4 w-4" />
+                                    </Button>
+                                )}
+                                {onDelete && (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => onDelete(record)}
+                                        className="h-8 w-8 text-gray-500 hover:text-red-600"
+                                        aria-label="記録を削除"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                )}
+                            </div>
                         </TableCell>
                     </TableRow>
                 ))}

@@ -186,4 +186,39 @@ describe('HandRepository', () => {
         // @ts-expect-error - Testing runtime validation
         await expect(HandRepository.save(invalidHand)).rejects.toThrow();
     });
+
+    it('1.9. Query: queries hands by tournamentId', async () => {
+        const hand1 = { ...mockHand, uuid: crypto.randomUUID(), tournamentId: 101 };
+        const hand2 = { ...mockHand, uuid: crypto.randomUUID(), tournamentId: 102 };
+        const hand3 = { ...mockHand, uuid: crypto.randomUUID(), tournamentId: 101 };
+
+        await HandRepository.save(hand1);
+        await HandRepository.save(hand2);
+        await HandRepository.save(hand3);
+
+        const results = await HandRepository.query({
+            tournamentId: 101
+        });
+
+        expect(results).toHaveLength(2);
+        const uuids = results.map(h => h.uuid);
+        expect(uuids).toContain(hand1.uuid);
+        expect(uuids).toContain(hand3.uuid);
+        expect(uuids).not.toContain(hand2.uuid);
+    });
+
+    it('3.1. getUniqueTags: returns sorted unique tags', async () => {
+        const hand1 = { ...mockHand, uuid: crypto.randomUUID(), tags: ['TagB', 'TagA'] };
+        const hand2 = { ...mockHand, uuid: crypto.randomUUID(), tags: ['TagC', 'TagA'] };
+        const hand3 = { ...mockHand, uuid: crypto.randomUUID(), tags: [] as string[] };
+
+        await HandRepository.save(hand1);
+        await HandRepository.save(hand2);
+        await HandRepository.save(hand3);
+
+        const tags = await HandRepository.getUniqueTags();
+
+        expect(tags).toHaveLength(3);
+        expect(tags).toEqual(['TagA', 'TagB', 'TagC']); // Sorted
+    });
 });
