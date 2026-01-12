@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { TournamentForm } from '@/components/tournament/TournamentForm';
 import { TournamentRepository } from '@/data/TournamentRepository';
+import { ChipRecordRepository } from '@/data/ChipRecordRepository';
 import { Layout } from '@/components/layout/Layout';
 
 const TournamentCreatePage: React.FC = () => {
@@ -18,6 +19,16 @@ const TournamentCreatePage: React.FC = () => {
             createdAt: new Date(),
             updatedAt: new Date(),
         });
+
+        // Initialize with first record (Fixes Issue 2 & 3)
+        await ChipRecordRepository.save({
+            tournamentId: id,
+            chipCount: values.startChips,
+            sb: values.sb,
+            bb: values.bb,
+            timestamp: new Date(),
+        });
+
         navigate(`/tournaments/${id}`);
     };
 

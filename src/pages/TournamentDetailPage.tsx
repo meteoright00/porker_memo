@@ -68,7 +68,7 @@ const TournamentDetailPage: React.FC = () => {
                 <div>
                     <h1 className="text-2xl font-bold">{tournament.name}</h1>
                     <div className="text-gray-500 text-sm mt-1">
-                        開始スタック: {tournament.startDate ? tournament.startDate.toLocaleDateString() : ''}
+                        開始スタック: {tournament.startChips}
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -120,7 +120,7 @@ const TournamentDetailPage: React.FC = () => {
 
                     <div className="bg-white p-4 rounded-lg border shadow-sm">
                         <h2 className="text-lg font-semibold mb-4">履歴</h2>
-                        <ChipHistoryList records={chipRecords} startChips={30000} />
+                        <ChipHistoryList records={chipRecords} startChips={tournament.startChips} />
                     </div>
                 </div>
             </div>
