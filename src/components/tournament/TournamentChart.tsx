@@ -25,10 +25,7 @@ export const TournamentChart: React.FC<TournamentChartProps> = ({ records, start
             time: 'Start',
             timestamp: records.length > 0 ? records[0].timestamp.getTime() - 1000 : Date.now(),
             chips: startChips,
-            bb: 0, // BB equivalent 0 at start? Or calculate based on initial BB? Let's say 0 or undefined.
-            // Actually, if we want to show BB progression, we need initial BB. 
-            // But we don't have initial BB in props easily (though tournament has sb/bb, we only pass startChips).
-            // Let's just omit BB for start or set to 0.
+            bb: records.length > 0 && records[0].bb > 0 ? Math.round(startChips / records[0].bb) : 0,
         };
 
         const recordsData = records.map(r => ({
