@@ -26,4 +26,8 @@ export class TournamentRepository {
     static async delete(id: number): Promise<void> {
         await db.tournaments.delete(id);
     }
+
+    static async update(id: number, changes: Partial<Tournament>): Promise<void> {
+        await db.tournaments.update(id, changes);
+    }
 }

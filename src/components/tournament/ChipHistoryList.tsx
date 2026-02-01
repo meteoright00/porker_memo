@@ -70,6 +70,7 @@ export const ChipHistoryList: React.FC<ChipHistoryListProps> = ({ records, start
                                         onClick={() => onEdit(record)}
                                         className="h-8 w-8 text-gray-500 hover:text-blue-600"
                                         aria-label="記録を編集"
+                                        data-testid="record-edit-btn"
                                     >
                                         <Pencil className="h-4 w-4" />
                                     </Button>
@@ -81,6 +82,7 @@ export const ChipHistoryList: React.FC<ChipHistoryListProps> = ({ records, start
                                         onClick={() => onDelete(record)}
                                         className="h-8 w-8 text-gray-500 hover:text-red-600"
                                         aria-label="記録を削除"
+                                        data-testid="record-delete-btn"
                                     >
                                         <Trash2 className="h-4 w-4" />
                                     </Button>

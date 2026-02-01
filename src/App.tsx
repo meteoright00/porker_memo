@@ -5,7 +5,7 @@ import TournamentListPage from './pages/TournamentListPage';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 
 import TournamentCreatePage from './pages/TournamentCreatePage';
-import TournamentDetailPage from './pages/TournamentDetailPage';
+import { TournamentDetailPage } from './pages/TournamentDetailPage';
 
 import { Toaster } from '@/components/ui/toaster';
 

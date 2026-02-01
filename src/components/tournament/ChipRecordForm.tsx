@@ -12,7 +12,7 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { ChipRecord } from '@/types/tournament';
+import { ChipRecord, StructureItem } from '@/types/tournament';
 
 const formSchema = z.object({
     chipCount: z.coerce.number().min(0, '0以上の数値を入力してください'),
@@ -25,27 +25,58 @@ type FormValues = z.infer<typeof formSchema>;
 interface ChipRecordFormProps {
     onSubmit: (values: FormValues) => void;
     lastRecord?: ChipRecord;
-    initialValues?: ChipRecord;
+    initialValues?: Partial<ChipRecord>;
     submitLabel?: string;
+    currentBlind?: StructureItem;
 }
 
-export const ChipRecordForm: React.FC<ChipRecordFormProps> = ({ onSubmit, lastRecord, initialValues, submitLabel = '記録' }) => {
+export const ChipRecordForm: React.FC<ChipRecordFormProps> = ({
+    onSubmit,
+    lastRecord,
+    initialValues,
+    submitLabel = '記録',
+    currentBlind,
+}) => {
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema) as any,
-        defaultValues: {
-            chipCount: initialValues?.chipCount,
-            sb: initialValues?.sb ?? 100,
-            bb: initialValues?.bb ?? 200,
+        defaultValues: initialValues || {
+            // If lastRecord exists, default to empty to allow fresh input.
+            // If it's the very first record (startChips), default to startChips (30000).
+            chipCount: lastRecord ? ('' as any) : 30000,
+            sb: currentBlind?.sb ?? 100,
+            bb: currentBlind?.bb ?? 200,
         },
     });
 
-    // Update default values when lastRecord changes, strictly for new entries (no initialValues)
+    // Track the last applied blind structure to prevent re-applying same values on parent re-renders
+    const lastAppliedRef = React.useRef<string | null>(null);
+
+    // Update defaults when dependencies change, but only if the actual blind values are different
     useEffect(() => {
-        if (!initialValues && lastRecord) {
-            form.setValue('sb', lastRecord.sb);
-            form.setValue('bb', lastRecord.bb);
+        if (!initialValues) {
+            let targetSB: number | undefined;
+            let targetBB: number | undefined;
+
+            if (currentBlind) {
+                targetSB = currentBlind.sb;
+                targetBB = currentBlind.bb;
+            } else if (lastRecord) {
+                targetSB = lastRecord.sb;
+                targetBB = lastRecord.bb;
+            }
+
+            if (targetSB !== undefined && targetBB !== undefined) {
+                const targetStr = `${targetSB}-${targetBB}`;
+                // Only apply if DIFFERENT from what we last applied automatically
+                // This allows the user (or submit handler) to clear the form without it popping back
+                if (lastAppliedRef.current !== targetStr) {
+                    form.setValue('sb', targetSB);
+                    form.setValue('bb', targetBB);
+                    lastAppliedRef.current = targetStr;
+                }
+            }
         }
-    }, [lastRecord, form, initialValues]);
+    }, [currentBlind, lastRecord, form, initialValues]);
 
     // Update form if initialValues change (e.g. switching edit target)
     useEffect(() => {
@@ -58,17 +89,83 @@ export const ChipRecordForm: React.FC<ChipRecordFormProps> = ({ onSubmit, lastRe
         }
     }, [initialValues, form]);
 
+    const chipCount = form.watch('chipCount');
+    const bbValue = form.watch('bb');
+
+    const handleSubmit = (values: FormValues) => {
+        onSubmit(values);
+        // Reset chip count, sb, and bb for new entry convenience
+        if (!initialValues) {
+            // Explicitly set to '' (empty) to clear the input visual
+            form.setValue('chipCount', '' as any);
+            form.setValue('sb', '' as any);
+            form.setValue('bb', '' as any);
+        }
+    };
+
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+                <div className="bg-slate-100 p-4 rounded-lg text-center">
+                    <div className="text-sm text-gray-500 mb-1">現在のチップ量</div>
+                    <div className="text-2xl font-bold flex items-baseline justify-center gap-2">
+                        {(() => {
+                            const formVal = Number(chipCount);
+                            const hasFormVal = !isNaN(formVal) && chipCount !== '' && chipCount !== undefined && chipCount !== null;
+
+                            // If input has value, use it. Otherwise fallback.
+                            let displayVal = 0;
+                            if (hasFormVal) {
+                                displayVal = formVal;
+                            } else {
+                                displayVal = lastRecord?.chipCount ?? initialValues?.chipCount ?? 30000;
+                            }
+
+                            return displayVal.toLocaleString();
+                        })()}
+                        <span
+                            data-testid="bb-display"
+                            className="text-base font-normal text-gray-600"
+                        >
+                            {(() => {
+                                const formVal = Number(chipCount);
+                                const hasFormVal = !isNaN(formVal) && chipCount !== '' && chipCount !== undefined && chipCount !== null;
+
+                                let currentChips = 0;
+                                if (hasFormVal) {
+                                    currentChips = formVal;
+                                } else {
+                                    currentChips = lastRecord?.chipCount ?? initialValues?.chipCount ?? 30000;
+                                }
+
+                                const currentBB = (() => {
+                                    // Similar fallback logic for BB
+                                    const formVal = Number(bbValue);
+                                    const hasFormVal = !isNaN(formVal) && bbValue !== '' && bbValue !== undefined && bbValue !== null;
+
+                                    if (hasFormVal) return formVal;
+                                    return lastRecord?.bb ?? initialValues?.bb ?? currentBlind?.bb ?? 200;
+                                })();
+                                const bb = (currentChips / (currentBB || 1)).toFixed(1);
+                                return `(${bb} BB)`;
+                            })()}
+                        </span>
+                    </div>
+                </div>
+
                 <FormField
                     control={form.control}
                     name="chipCount"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>現在のチップ量</FormLabel>
+                            <FormLabel>チップ量</FormLabel>
                             <FormControl>
-                                <Input type="number" placeholder="例: 30000" {...field} value={field.value ?? ''} />
+                                <Input
+                                    type="number"
+                                    {...field}
+                                    value={field.value ?? ''}
+                                    placeholder="例: 30000"
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -80,7 +177,7 @@ export const ChipRecordForm: React.FC<ChipRecordFormProps> = ({ onSubmit, lastRe
                         name="sb"
                         render={({ field }) => (
                             <FormItem className="flex-1">
-                                <FormLabel>現在のSB</FormLabel>
+                                <FormLabel>SB</FormLabel>
                                 <FormControl>
                                     <Input type="number" {...field} value={field.value ?? ''} />
                                 </FormControl>
@@ -93,7 +190,7 @@ export const ChipRecordForm: React.FC<ChipRecordFormProps> = ({ onSubmit, lastRe
                         name="bb"
                         render={({ field }) => (
                             <FormItem className="flex-1">
-                                <FormLabel>現在のBB</FormLabel>
+                                <FormLabel>BB</FormLabel>
                                 <FormControl>
                                     <Input type="number" {...field} value={field.value ?? ''} />
                                 </FormControl>

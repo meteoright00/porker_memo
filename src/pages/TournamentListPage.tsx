@@ -64,9 +64,11 @@ const TournamentListPage: React.FC = () => {
                                     <div className="flex justify-between text-sm">
                                         <span className={`px-2 py-1 rounded-full ${tournament.status === 'active'
                                             ? 'bg-green-100 text-green-800'
-                                            : 'bg-gray-100 text-gray-800'
+                                            : tournament.status === 'pending'
+                                                ? 'bg-yellow-100 text-yellow-800'
+                                                : 'bg-gray-100 text-gray-800'
                                             }`}>
-                                            {tournament.status === 'active' ? '進行中' : '完了'}
+                                            {tournament.status === 'active' ? '進行中' : tournament.status === 'pending' ? '未開始' : '完了'}
                                         </span>
                                     </div>
                                 </CardContent>

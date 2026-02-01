@@ -7,27 +7,32 @@ import { TournamentRepository } from '@/data/TournamentRepository';
 import { ChipRecordRepository } from '@/data/ChipRecordRepository';
 import { Layout } from '@/components/layout/Layout';
 
+import { StructureItem } from '@/types/tournament';
+
 const TournamentCreatePage: React.FC = () => {
     const navigate = useNavigate();
 
-    const handleSubmit = async (values: { name: string; startChips: number; sb: number; bb: number }) => {
+    const handleSubmit = async (values: { name: string; startChips: number; sb: number; bb: number; isPending?: boolean; structure?: StructureItem[] }) => {
         const id = await TournamentRepository.save({
             name: values.name,
             startChips: values.startChips,
             startDate: new Date(),
-            status: 'active',
+            status: values.isPending ? 'pending' : 'active',
+            structure: values.structure,
             createdAt: new Date(),
             updatedAt: new Date(),
         });
 
-        // Initialize with first record (Fixes Issue 2 & 3)
-        await ChipRecordRepository.save({
-            tournamentId: id,
-            chipCount: values.startChips,
-            sb: values.sb,
-            bb: values.bb,
-            timestamp: new Date(),
-        });
+        // Initialize with first record ONLY if not pending
+        if (!values.isPending) {
+            await ChipRecordRepository.save({
+                tournamentId: id,
+                chipCount: values.startChips,
+                sb: values.sb,
+                bb: values.bb,
+                timestamp: new Date(),
+            });
+        }
 
         navigate(`/tournaments/${id}`);
     };

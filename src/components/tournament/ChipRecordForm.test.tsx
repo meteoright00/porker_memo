@@ -1,60 +1,107 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { ChipRecordForm } from './ChipRecordForm';
-import { userEvent } from '@testing-library/user-event';
+import { StructureItem } from '@/types/tournament';
 
 describe('ChipRecordForm', () => {
-    it('renders all fields', () => {
-        render(<ChipRecordForm onSubmit={vi.fn()} />);
-        expect(screen.getByLabelText('現在のチップ量')).toBeInTheDocument();
-        expect(screen.getByLabelText('現在のSB')).toBeInTheDocument();
-        expect(screen.getByLabelText('現在のBB')).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /記録/i })).toBeInTheDocument();
+    it('auto-fills SB/BB from currentBlind prop', () => {
+        const mockSubmit = vi.fn();
+        const currentBlind: StructureItem = { sb: 500, bb: 1000, duration: 20 };
+
+        render(<ChipRecordForm onSubmit={mockSubmit} currentBlind={currentBlind} />);
+
+        expect(screen.getByLabelText('SB')).toHaveValue(500);
+        expect(screen.getByLabelText('BB')).toHaveValue(1000);
     });
 
-    it('uses last record for defaults', () => {
-        const lastRecord = {
-            id: 1,
-            tournamentId: 1,
-            chipCount: 20000,
-            sb: 100,
-            bb: 200,
-            timestamp: new Date()
-        };
-        render(<ChipRecordForm onSubmit={vi.fn()} lastRecord={lastRecord} />);
+    it('displays calculated BB count when chip count acts', async () => {
+        const mockSubmit = vi.fn();
+        const currentBlind: StructureItem = { sb: 500, bb: 1000, duration: 20 };
 
-        expect(screen.getByLabelText('現在のSB')).toHaveValue(100);
-        expect(screen.getByLabelText('現在のBB')).toHaveValue(200);
+        render(<ChipRecordForm onSubmit={mockSubmit} currentBlind={currentBlind} />);
+
+        const chipInput = screen.getByLabelText('チップ量');
+        fireEvent.change(chipInput, { target: { value: '30000' } });
+
+        // 30000 / 1000 = 30 => "30.0 BB"
+        await waitFor(() => {
+            const display = screen.queryByTestId('bb-display');
+            if (!display) screen.debug(undefined, 10000); // Print full tree
+            expect(display).toBeInTheDocument();
+            expect(display).toHaveTextContent(/30\.0\s*BB/);
+        });
     });
 
-    it.skip('submits valid data', async () => {
-        const onSubmit = vi.fn();
-        const user = userEvent.setup();
-        render(<ChipRecordForm onSubmit={onSubmit} />);
+    it('resets chip count and SB/BB after submit', async () => {
+        const mockSubmit = vi.fn();
+        const currentBlind: StructureItem = { sb: 500, bb: 1000, duration: 20 };
 
-        const chipInput = screen.getByLabelText('現在のチップ量');
-        const sbInput = screen.getByLabelText('現在のSB');
-        const bbInput = screen.getByLabelText('現在のBB');
+        const { rerender } = render(<ChipRecordForm onSubmit={mockSubmit} currentBlind={currentBlind} />);
 
-        fireEvent.change(chipInput, { target: { value: '25000' } });
-        fireEvent.change(sbInput, { target: { value: '200' } });
-        fireEvent.change(bbInput, { target: { value: '400' } });
+        const chipInput = screen.getByLabelText('チップ量');
+        fireEvent.change(chipInput, { target: { value: '30000' } });
 
-
-
-        expect(chipInput).toHaveValue(25000);
-        expect(sbInput).toHaveValue(200);
-        expect(bbInput).toHaveValue(400);
-
-        fireEvent.click(screen.getByRole('button', { name: /記録/i }));
-
+        const submitButton = screen.getByRole('button', { name: /記録/ }); // Adjust name if needed
+        fireEvent.click(submitButton);
 
         await waitFor(() => {
-            expect(onSubmit).toHaveBeenCalledWith({
-                chipCount: 25000,
-                sb: 200,
-                bb: 400,
-            });
+            expect(mockSubmit).toHaveBeenCalled();
+            // Chip count should be reset (empty)
+            expect(chipInput).toHaveValue(null);
+
+            // SB/BB should also be reset
+            expect(screen.getByLabelText('SB')).toHaveValue(null);
+            expect(screen.getByLabelText('BB')).toHaveValue(null);
         });
+
+        // Simulate parent re-render with new object ref but same values
+        rerender(<ChipRecordForm onSubmit={mockSubmit} currentBlind={{ ...currentBlind }} />);
+
+        // Should STILL be empty
+        await waitFor(() => {
+            expect(screen.getByLabelText('SB')).toHaveValue(null);
+            expect(screen.getByLabelText('BB')).toHaveValue(null);
+        });
+    });
+    it('shows fallback chip count when input is empty', async () => {
+        const mockSubmit = vi.fn();
+        const currentBlind: StructureItem = { sb: 500, bb: 1000, duration: 20 };
+        const lastRecord = { id: 1, tournamentId: 1, chipCount: 25000, sb: 200, bb: 400, timestamp: new Date() };
+
+        render(<ChipRecordForm onSubmit={mockSubmit} currentBlind={currentBlind} lastRecord={lastRecord} />);
+
+        // Should show empty input when lastRecord exists (user request)
+        // Note: Logic changed. If lastRecord exists, we want input to be empty for fresh entry.
+        const chipInput = screen.getByLabelText('チップ量');
+        expect(chipInput).toHaveValue(null);
+
+        // Display area should show lastRecord value as fallback
+        expect(screen.getByText('25,000')).toBeInTheDocument();
+
+        // Clear input
+        fireEvent.change(chipInput, { target: { value: '' } });
+        expect(chipInput).toHaveValue(null);
+
+        // Also clear SB/BB inputs manually (as they would be after submit)
+        const bbInput = screen.getByLabelText('BB');
+        fireEvent.change(bbInput, { target: { value: '' } });
+        expect(bbInput).toHaveValue(null);
+
+        // Display area should still show 25,000 (fallback)
+        // Format: "25,000"
+        expect(screen.getByText('25,000')).toBeInTheDocument();
+
+        // And BB should be calculated based on fallback chips (25000) and fallback BB (from lastRecord: 400)
+        // 25000 / 400 = 62.5
+        // If it was using currentBlind (1000), it would be 25.0. 
+        // If it was using default 1 (0 inputs), it would be 25000.
+        // We expect it to use lastRecord.bb (400) because that's the "context".
+        // Or should it use currentBlind (1000)?
+        // User said: "Initial BB if no input, or last entered BB".
+        // Here lastRecord has 400. currentBlind has 1000.
+        // Logic should probably prioritize form -> lastRecord -> currentBlind?
+        // Let's assume lastRecord is the "data source" for fallback if form is empty.
+        expect(screen.getByTestId('bb-display')).toHaveTextContent(/\(62\.5\s*BB\)/);
     });
 });

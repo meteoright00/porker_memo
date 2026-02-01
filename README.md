@@ -23,8 +23,9 @@ Built for efficiency, it allows players to quickly record hand histories, tag im
 -   **Hand Deletion:** Remove unwanted or test records easily.
 
 ### 🏆 Tournament Management
--   **Session Tracking:** Create and manage multiple tournament sessions.
--   **Chip Tracking:** Record stack sizes at each blind level.
+-   **Session Tracking:** Create and manage multiple tournament sessions. Supports "Pending" status for pre-registration.
+-   **Structure Management:** Flexible structure editor with support for SB/BB, Ante, and Duration.
+-   **Smart Chip Tracking:** Record stack sizes with auto-calculated current blind levels based on tournament timer.
 -   **Visual Charts:** Monitor chip stack progression and "M-value" over time with interactive charts.
 -   **Integrated Hand Recording:** Seamlessly switch between tournament tracking and hand recording, with auto-linked tournament context and tags.
 
@@ -125,8 +126,9 @@ MIT License
 -   **ハンド削除:** 不要な記録やテストデータを簡単に削除できます。
 
 ### 🏆 トーナメント管理
--   **セッション追跡:** 複数のトーナメントセッションを作成・管理できます。
--   **チップ推移記録:** ブラインドレベルごとのスタックサイズを記録します。
+-   **セッション追跡:** 複数のトーナメントセッションを作成・管理できます。「開始待ち(Pending)」ステータスにも対応。
+-   **ストラクチャー管理:** SB/BB、Ante、ラウンド時間を設定可能な柔軟なストラクチャーエディタ。
+-   **スマートなチップ記録:** トーナメントタイマーに基づき、現在のブラインドレベルを自動計算・補完してチップ量を記録できます。
 -   **視覚的チャート:** チップ量の推移や「M値」の変化をインタラクティブなチャートで確認できます。
 -   **ハンド記録との統合:** トーナメント管理とハンド記録をシームレスに行き来でき、トーナメント情報やタグが自動的に紐付けられます。
 

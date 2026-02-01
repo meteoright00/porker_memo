@@ -1,7 +1,18 @@
 import { z } from 'zod';
 
-export const TournamentStatusSchema = z.enum(['active', 'completed']);
+export const TournamentStatusSchema = z.enum(['pending', 'active', 'completed']);
 export type TournamentStatus = z.infer<typeof TournamentStatusSchema>;
+
+export const StructureItemSchema = z.object({
+    sb: z.number(),
+    bb: z.number(),
+    ante: z.number().optional(),
+    duration: z.number(),
+    isBreak: z.boolean().optional(),
+    label: z.string().optional(),
+});
+
+export type StructureItem = z.infer<typeof StructureItemSchema>;
 
 export const TournamentSchema = z.object({
     id: z.number().optional(),
@@ -9,6 +20,7 @@ export const TournamentSchema = z.object({
     startChips: z.number().default(30000),
     startDate: z.date(),
     status: TournamentStatusSchema.default('active'),
+    structure: z.array(StructureItemSchema).optional(),
     createdAt: z.date(),
     updatedAt: z.date(),
 });
