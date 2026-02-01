@@ -111,7 +111,7 @@ export const ChipRecordForm: React.FC<ChipRecordFormProps> = ({
                     <div className="text-2xl font-bold flex items-baseline justify-center gap-2">
                         {(() => {
                             const formVal = Number(chipCount);
-                            const hasFormVal = !isNaN(formVal) && chipCount !== '' && chipCount !== undefined && chipCount !== null;
+                            const hasFormVal = !isNaN(formVal) && (chipCount as any) !== '' && chipCount !== undefined && chipCount !== null;
 
                             // If input has value, use it. Otherwise fallback.
                             let displayVal = 0;
@@ -129,7 +129,7 @@ export const ChipRecordForm: React.FC<ChipRecordFormProps> = ({
                         >
                             {(() => {
                                 const formVal = Number(chipCount);
-                                const hasFormVal = !isNaN(formVal) && chipCount !== '' && chipCount !== undefined && chipCount !== null;
+                                const hasFormVal = !isNaN(formVal) && (chipCount as any) !== '' && chipCount !== undefined && chipCount !== null;
 
                                 let currentChips = 0;
                                 if (hasFormVal) {
@@ -141,7 +141,7 @@ export const ChipRecordForm: React.FC<ChipRecordFormProps> = ({
                                 const currentBB = (() => {
                                     // Similar fallback logic for BB
                                     const formVal = Number(bbValue);
-                                    const hasFormVal = !isNaN(formVal) && bbValue !== '' && bbValue !== undefined && bbValue !== null;
+                                    const hasFormVal = !isNaN(formVal) && (bbValue as any) !== '' && bbValue !== undefined && bbValue !== null;
 
                                     if (hasFormVal) return formVal;
                                     return lastRecord?.bb ?? initialValues?.bb ?? currentBlind?.bb ?? 200;
