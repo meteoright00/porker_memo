@@ -145,10 +145,6 @@ describe('TournamentDetailPage', () => {
         (TournamentRepository.update as any).mockImplementation(mockUpdate);
         (ChipRecordRepository.getByTournamentId as any).mockResolvedValue([]);
 
-        // Mock confirm
-        const confirmSpy = vi.spyOn(window, 'confirm');
-        confirmSpy.mockImplementation(() => true);
-
         render(
             <MemoryRouter initialEntries={['/tournaments/1']}>
                 <Routes>
@@ -161,21 +157,27 @@ describe('TournamentDetailPage', () => {
             expect(screen.getByText('Active Tournament')).toBeInTheDocument();
         });
 
+        // Click the "終了する" button in the header to open the dialog
         const finishButton = screen.getByText('終了する');
         expect(finishButton).toBeInTheDocument();
-
         finishButton.click();
 
+        // Wait for the dialog to appear
         await waitFor(() => {
-            // Check if called at all first
+            expect(screen.getByText('トーナメント終了')).toBeInTheDocument();
+        });
+
+        // Click the confirm button inside the dialog
+        const dialogButtons = screen.getAllByText('終了する');
+        const confirmButton = dialogButtons[dialogButtons.length - 1]; // The one inside the dialog
+        confirmButton.click();
+
+        await waitFor(() => {
             expect(mockUpdate).toHaveBeenCalled();
-            // Then specific check
             expect(mockUpdate).toHaveBeenCalledWith(1, expect.objectContaining({
                 status: 'completed'
             }));
         });
-
-        confirmSpy.mockRestore();
     });
 
     it('shows completed state correctly', async () => {
@@ -203,6 +205,52 @@ describe('TournamentDetailPage', () => {
         expect(screen.queryByText('終了する')).not.toBeInTheDocument();
     });
 
+    it('updates startDate when starting a pending tournament', async () => {
+        const mockUpdate = vi.fn();
+        (TournamentRepository.getById as any).mockResolvedValue({
+            id: 10,
+            name: 'Pending Tournament',
+            status: 'pending',
+            startDate: new Date('2024-01-01T00:00:00'),
+            startChips: 30000,
+            structure: [{ sb: 100, bb: 200, duration: 20 }],
+        });
+        (TournamentRepository.update as any).mockImplementation(mockUpdate);
+        (ChipRecordRepository.getByTournamentId as any).mockResolvedValue([]);
+        (ChipRecordRepository.save as any).mockResolvedValue(1);
+
+        const confirmSpy = vi.spyOn(window, 'confirm');
+        confirmSpy.mockImplementation(() => true);
+
+        render(
+            <MemoryRouter initialEntries={['/tournaments/10']}>
+                <Routes>
+                    <Route path="/tournaments/:id" element={<TournamentDetailPage />} />
+                </Routes>
+            </MemoryRouter>
+        );
+
+        await waitFor(() => {
+            expect(screen.getByText('Pending Tournament')).toBeInTheDocument();
+        });
+
+        const startButton = screen.getByText('開始');
+        fireEvent.click(startButton);
+
+        await waitFor(() => {
+            expect(mockUpdate).toHaveBeenCalledWith(10, expect.objectContaining({
+                status: 'active',
+                startDate: expect.any(Date),
+            }));
+            // Verify startDate is recent (not the old 2024-01-01 value)
+            const callArgs = mockUpdate.mock.calls[0][1];
+            const now = new Date();
+            const diffMs = Math.abs(now.getTime() - callArgs.startDate.getTime());
+            expect(diffMs).toBeLessThan(5000); // Within 5 seconds
+        });
+
+        confirmSpy.mockRestore();
+    });
 
 });
 

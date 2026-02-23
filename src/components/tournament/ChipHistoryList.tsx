@@ -30,68 +30,70 @@ export const ChipHistoryList: React.FC<ChipHistoryListProps> = ({ records, start
     };
 
     return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead>時間</TableHead>
-                    <TableHead>SB / BB</TableHead>
-                    <TableHead>チップ量</TableHead>
-                    <TableHead>増減</TableHead>
-                    <TableHead className="w-[100px]">操作</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {records.map((record, index) => (
-                    <TableRow key={record.id}>
-                        <TableCell>
-                            {format(record.timestamp, 'HH:mm')}
-                        </TableCell>
-                        <TableCell>
-                            {record.sb} / {record.bb}
-                        </TableCell>
-                        <TableCell>
-                            {record.chipCount.toLocaleString()}
-                        </TableCell>
-                        <TableCell className={
-                            getDiff(index).startsWith('+')
-                                ? 'text-green-600 font-bold'
-                                : getDiff(index).startsWith('-')
-                                    ? 'text-red-600 font-bold'
-                                    : ''
-                        }>
-                            {getDiff(index)}
-                        </TableCell>
-                        <TableCell>
-                            <div className="flex gap-2">
-                                {onEdit && (
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => onEdit(record)}
-                                        className="h-8 w-8 text-gray-500 hover:text-blue-600"
-                                        aria-label="記録を編集"
-                                        data-testid="record-edit-btn"
-                                    >
-                                        <Pencil className="h-4 w-4" />
-                                    </Button>
-                                )}
-                                {onDelete && (
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => onDelete(record)}
-                                        className="h-8 w-8 text-gray-500 hover:text-red-600"
-                                        aria-label="記録を削除"
-                                        data-testid="record-delete-btn"
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                )}
-                            </div>
-                        </TableCell>
+        <div className="overflow-x-auto">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>時間</TableHead>
+                        <TableHead>SB / BB</TableHead>
+                        <TableHead>チップ量</TableHead>
+                        <TableHead>増減</TableHead>
+                        <TableHead className="w-[100px]">操作</TableHead>
                     </TableRow>
-                ))}
-            </TableBody>
-        </Table>
+                </TableHeader>
+                <TableBody>
+                    {records.map((record, index) => (
+                        <TableRow key={record.id}>
+                            <TableCell>
+                                {format(record.timestamp, 'HH:mm')}
+                            </TableCell>
+                            <TableCell>
+                                {record.sb} / {record.bb}
+                            </TableCell>
+                            <TableCell>
+                                {record.chipCount.toLocaleString()}
+                            </TableCell>
+                            <TableCell className={
+                                getDiff(index).startsWith('+')
+                                    ? 'text-green-600 font-bold'
+                                    : getDiff(index).startsWith('-')
+                                        ? 'text-red-600 font-bold'
+                                        : ''
+                            }>
+                                {getDiff(index)}
+                            </TableCell>
+                            <TableCell>
+                                <div className="flex gap-2">
+                                    {onEdit && (
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => onEdit(record)}
+                                            className="h-8 w-8 text-gray-500 hover:text-blue-600"
+                                            aria-label="記録を編集"
+                                            data-testid="record-edit-btn"
+                                        >
+                                            <Pencil className="h-4 w-4" />
+                                        </Button>
+                                    )}
+                                    {onDelete && (
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => onDelete(record)}
+                                            className="h-8 w-8 text-gray-500 hover:text-red-600"
+                                            aria-label="記録を削除"
+                                            data-testid="record-delete-btn"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    )}
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </div>
     );
 };

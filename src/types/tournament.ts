@@ -21,6 +21,8 @@ export const TournamentSchema = z.object({
     startDate: z.date(),
     status: TournamentStatusSchema.default('active'),
     structure: z.array(StructureItemSchema).optional(),
+    resultRank: z.number().optional(),
+    totalPlayers: z.number().optional(),
     createdAt: z.date(),
     updatedAt: z.date(),
 });

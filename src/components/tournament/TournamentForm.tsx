@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 
 import { StructureEditor } from './StructureEditor';
-import { StructureItemSchema } from '@/types/tournament';
 
 const formSchema = z.object({
     name: z.string().min(1, '名前を入力してください'),
@@ -24,7 +23,20 @@ const formSchema = z.object({
     sb: z.coerce.number().min(1, '1以上の数値を入力してください'),
     bb: z.coerce.number().min(1, '1以上の数値を入力してください'),
     isPending: z.boolean().default(false),
-    structure: z.array(StructureItemSchema).optional(),
+    structure: z.array(z.any()).optional().refine(
+        (items) => {
+            if (!items || items.length === 0) return true;
+            return items.every((item: any) => {
+                if (item.isBreak) return item.duration != null && item.duration > 0;
+                return (
+                    item.sb != null && item.sb > 0 &&
+                    item.bb != null && item.bb > 0 &&
+                    item.duration != null && item.duration > 0
+                );
+            });
+        },
+        { message: 'ストラクチャーの各レベルにはSB, BB, 時間を入力してください' }
+    ),
 });
 
 type FormValues = z.infer<typeof formSchema>;

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Play } from 'lucide-react';
+import { ArrowLeft, Play, Trophy } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { ChipRecordRepository } from '@/data/ChipRecordRepository';
 import { TournamentRepository } from '@/data/TournamentRepository';
 import { ChipRecord, Tournament, StructureItem } from '@/types/tournament';
@@ -20,6 +21,9 @@ export const TournamentDetailPage: React.FC = () => {
     const [isLoadingRecords, setIsLoadingRecords] = useState(true);
     const [editingRecord, setEditingRecord] = useState<ChipRecord | null>(null);
     const [currentBlind, setCurrentBlind] = useState<StructureItem | undefined>(undefined);
+    const [showCompleteDialog, setShowCompleteDialog] = useState(false);
+    const [resultRank, setResultRank] = useState<string>('');
+    const [totalPlayers, setTotalPlayers] = useState<string>('');
 
     const loadData = async () => {
         if (!id) return;
@@ -88,7 +92,7 @@ export const TournamentDetailPage: React.FC = () => {
     const handleStart = async () => {
         if (!tournament) return;
         if (confirm('トーナメントを開始しますか？')) {
-            await TournamentRepository.update(tournament.id!, { status: 'active' });
+            await TournamentRepository.update(tournament.id!, { status: 'active', startDate: new Date() });
             // Create initial chip record
             await ChipRecordRepository.save({
                 tournamentId: tournament.id!,
@@ -101,12 +105,24 @@ export const TournamentDetailPage: React.FC = () => {
         }
     };
 
-    const handleComplete = async () => {
+    const handleComplete = () => {
         if (!tournament) return;
-        if (confirm('トーナメントを終了しますか？')) {
-            await TournamentRepository.update(tournament.id!, { status: 'completed' });
-            loadData();
-        }
+        setShowCompleteDialog(true);
+    };
+
+    const handleCompleteConfirm = async () => {
+        if (!tournament) return;
+        const rank = resultRank ? Number(resultRank) : undefined;
+        const total = totalPlayers ? Number(totalPlayers) : undefined;
+        await TournamentRepository.update(tournament.id!, {
+            status: 'completed',
+            resultRank: rank,
+            totalPlayers: total,
+        });
+        setShowCompleteDialog(false);
+        setResultRank('');
+        setTotalPlayers('');
+        loadData();
     };
 
     const handleDeleteTournament = async () => {
@@ -124,15 +140,17 @@ export const TournamentDetailPage: React.FC = () => {
     return (
         <Layout>
             <div className="space-y-6">
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" onClick={() => navigate('/tournaments')}>
-                        <ArrowLeft className="h-4 w-4" />
-                    </Button>
-                    <h1 className="text-2xl font-bold">{tournament.name}</h1>
-                    <div className="ml-auto flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <div className="flex items-center gap-4">
+                        <Button variant="ghost" size="icon" onClick={() => navigate('/tournaments')}>
+                            <ArrowLeft className="h-4 w-4" />
+                        </Button>
+                        <h1 className="text-2xl font-bold">{tournament.name}</h1>
+                    </div>
+                    <div className="sm:ml-auto flex items-center gap-2 flex-wrap">
                         {tournament.status === 'pending' && (
                             <div className="flex items-center gap-2">
-                                <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded">未開始</span>
+                                <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded whitespace-nowrap">未開始</span>
                                 <Button size="sm" onClick={handleStart}>
                                     <Play className="h-4 w-4 mr-1" />
                                     開始
@@ -140,10 +158,18 @@ export const TournamentDetailPage: React.FC = () => {
                             </div>
                         )}
                         {tournament.status === 'active' && (
-                            <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">進行中</span>
+                            <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded whitespace-nowrap">進行中</span>
                         )}
                         {tournament.status === 'completed' && (
-                            <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">完了</span>
+                            <div className="flex items-center gap-2">
+                                <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded whitespace-nowrap">完了</span>
+                                {tournament.resultRank && tournament.totalPlayers && (
+                                    <span className="flex items-center gap-1 bg-amber-50 text-amber-700 text-xs font-medium px-2.5 py-0.5 rounded whitespace-nowrap">
+                                        <Trophy className="h-3 w-3" />
+                                        {tournament.totalPlayers}人中{tournament.resultRank}位
+                                    </span>
+                                )}
+                            </div>
                         )}
                         {tournament.status === 'active' && (
                             <Button variant="outline" size="sm" onClick={handleComplete}>
@@ -258,6 +284,49 @@ export const TournamentDetailPage: React.FC = () => {
                             submitLabel="更新"
                         />
                     )}
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={showCompleteDialog} onOpenChange={(open) => !open && setShowCompleteDialog(false)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>トーナメント終了</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <p className="text-sm text-gray-600">順位を入力してください（任意）</p>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-sm font-medium block mb-1">参加人数</label>
+                                <Input
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    placeholder="例: 50"
+                                    value={totalPlayers}
+                                    onChange={(e) => setTotalPlayers(e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label className="text-sm font-medium block mb-1">順位</label>
+                                <Input
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    placeholder="例: 3"
+                                    value={resultRank}
+                                    onChange={(e) => setResultRank(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex gap-2 justify-end">
+                            <Button variant="outline" onClick={() => setShowCompleteDialog(false)}>
+                                キャンセル
+                            </Button>
+                            <Button onClick={handleCompleteConfirm}>
+                                終了する
+                            </Button>
+                        </div>
+                    </div>
                 </DialogContent>
             </Dialog>
         </Layout>

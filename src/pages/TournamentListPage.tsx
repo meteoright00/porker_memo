@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
-import { Plus, ArrowLeft } from 'lucide-react';
+import { Plus, ArrowLeft, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TournamentRepository } from '@/data/TournamentRepository';
@@ -62,14 +62,22 @@ const TournamentListPage: React.FC = () => {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="flex justify-between text-sm">
-                                        <span className={`px-2 py-1 rounded-full ${tournament.status === 'active'
-                                            ? 'bg-green-100 text-green-800'
-                                            : tournament.status === 'pending'
-                                                ? 'bg-yellow-100 text-yellow-800'
-                                                : 'bg-gray-100 text-gray-800'
-                                            }`}>
-                                            {tournament.status === 'active' ? '進行中' : tournament.status === 'pending' ? '未開始' : '完了'}
-                                        </span>
+                                        <div className="flex items-center gap-2">
+                                            <span className={`px-2 py-1 rounded-full whitespace-nowrap ${tournament.status === 'active'
+                                                ? 'bg-green-100 text-green-800'
+                                                : tournament.status === 'pending'
+                                                    ? 'bg-yellow-100 text-yellow-800'
+                                                    : 'bg-gray-100 text-gray-800'
+                                                }`}>
+                                                {tournament.status === 'active' ? '進行中' : tournament.status === 'pending' ? '未開始' : '完了'}
+                                            </span>
+                                            {tournament.status === 'completed' && tournament.resultRank && tournament.totalPlayers && (
+                                                <span className="flex items-center gap-1 bg-amber-50 text-amber-700 px-2 py-1 rounded-full whitespace-nowrap">
+                                                    <Trophy className="h-3 w-3" />
+                                                    {tournament.totalPlayers}人中{tournament.resultRank}位
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
                                 </CardContent>
                             </Card>

@@ -161,7 +161,9 @@ export const ChipRecordForm: React.FC<ChipRecordFormProps> = ({
                             <FormLabel>チップ量</FormLabel>
                             <FormControl>
                                 <Input
-                                    type="number"
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
                                     {...field}
                                     value={field.value ?? ''}
                                     placeholder="例: 30000"
@@ -176,10 +178,10 @@ export const ChipRecordForm: React.FC<ChipRecordFormProps> = ({
                         control={form.control}
                         name="sb"
                         render={({ field }) => (
-                            <FormItem className="flex-1">
+                            <FormItem className="flex-1 min-w-0">
                                 <FormLabel>SB</FormLabel>
                                 <FormControl>
-                                    <Input type="number" {...field} value={field.value ?? ''} />
+                                    <Input type="text" inputMode="numeric" pattern="[0-9]*" {...field} value={field.value ?? ''} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -189,10 +191,10 @@ export const ChipRecordForm: React.FC<ChipRecordFormProps> = ({
                         control={form.control}
                         name="bb"
                         render={({ field }) => (
-                            <FormItem className="flex-1">
+                            <FormItem className="flex-1 min-w-0">
                                 <FormLabel>BB</FormLabel>
                                 <FormControl>
-                                    <Input type="number" {...field} value={field.value ?? ''} />
+                                    <Input type="text" inputMode="numeric" pattern="[0-9]*" {...field} value={field.value ?? ''} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

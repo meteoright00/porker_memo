@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -19,17 +19,23 @@ interface StructureEditorProps {
 }
 
 export const StructureEditor: React.FC<StructureEditorProps> = ({ value = [], onChange }) => {
+    const [anteSameAsBB, setAnteSameAsBB] = React.useState(false);
+
     const handleAdd = () => {
-        onChange([
-            ...value,
-            { sb: 100, bb: 200, ante: 200, duration: 15, isBreak: false }
-        ]);
+        const newItem: StructureItem = { sb: 100, bb: 200, ante: anteSameAsBB ? 200 : 200, duration: 15, isBreak: false };
+        onChange([...value, newItem]);
     };
 
     const handleRemove = (index: number) => {
         const newValue = [...value];
         newValue.splice(index, 1);
         onChange(newValue);
+    };
+
+    const parseNumericInput = (raw: string): number | undefined => {
+        if (raw === '') return undefined;
+        const n = Number(raw);
+        return isNaN(n) ? undefined : n;
     };
 
     const handleChange = (index: number, field: keyof StructureItem, val: any) => {
@@ -45,24 +51,117 @@ export const StructureEditor: React.FC<StructureEditorProps> = ({ value = [], on
         } else if (field === 'isBreak' && val === false) {
             newValue[index].sb = 100;
             newValue[index].bb = 200;
-            newValue[index].ante = 200;
+            newValue[index].ante = anteSameAsBB ? 200 : 200;
             newValue[index].label = undefined;
+        }
+
+        // Sync ante with bb when anteSameAsBB is enabled
+        if (anteSameAsBB && field === 'bb' && !newValue[index].isBreak) {
+            newValue[index].ante = val;
         }
 
         onChange(newValue);
     };
 
+    const handleAnteSameAsBBToggle = (checked: boolean) => {
+        setAnteSameAsBB(checked);
+        if (checked && value.length > 0) {
+            const newValue = value.map(item => {
+                if (item.isBreak) return item;
+                return { ...item, ante: item.bb };
+            });
+            onChange(newValue);
+        }
+    };
+
+    const csvInputRef = React.useRef<HTMLInputElement>(null);
+
+    const handleCSVImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const text = e.target?.result as string;
+                const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+                if (lines.length === 0) {
+                    alert('CSVファイルが空です');
+                    return;
+                }
+
+                // Detect header row
+                let startIndex = 0;
+                const firstLine = lines[0].split(',');
+                if (firstLine.length > 0 && isNaN(Number(firstLine[0].trim()))) {
+                    startIndex = 1; // Skip header
+                }
+
+                const items: StructureItem[] = [];
+                for (let i = startIndex; i < lines.length; i++) {
+                    const cols = lines[i].split(',').map(c => c.trim());
+                    const sb = Number(cols[0]) || 0;
+                    const bb = Number(cols[1]) || 0;
+                    const ante = cols[2] ? Number(cols[2]) || undefined : undefined;
+                    const duration = Number(cols[3]) || 15;
+                    const label = cols[4] || undefined;
+                    const isBreak = sb === 0 && bb === 0;
+                    items.push({ sb, bb, ante, duration, isBreak, label: isBreak ? (label || '休憩') : label });
+                }
+
+                if (items.length === 0) {
+                    alert('有効なデータが見つかりませんでした');
+                    return;
+                }
+
+                if (value.length > 0) {
+                    if (!confirm(`既存の${value.length}レベルを${items.length}レベルで上書きしますか？`)) {
+                        return;
+                    }
+                }
+
+                onChange(items);
+            } catch {
+                alert('CSVの解析に失敗しました。フォーマット: SB,BB,Ante,Duration');
+            }
+        };
+        reader.readAsText(file);
+        // Reset input so the same file can be re-uploaded
+        event.target.value = '';
+    };
+
     return (
         <div className="space-y-4">
-            <div className="flex justify-between items-center">
-                <h3 className="text-sm font-medium">ストラクチャー設定</h3>
-                <Button type="button" variant="outline" size="sm" onClick={handleAdd}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    レベル追加
-                </Button>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                <h3 className="text-sm font-medium whitespace-nowrap">ストラクチャー設定</h3>
+                <div className="flex items-center gap-2 flex-wrap">
+                    <label className="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer select-none">
+                        <Checkbox
+                            checked={anteSameAsBB}
+                            onCheckedChange={(checked) => handleAnteSameAsBBToggle(!!checked)}
+                            id="ante-same-as-bb"
+                        />
+                        AnteをBBと同じにする
+                    </label>
+                    <input
+                        ref={csvInputRef}
+                        type="file"
+                        accept=".csv"
+                        className="hidden"
+                        onChange={handleCSVImport}
+                    />
+                    <Button type="button" variant="outline" size="sm" onClick={() => csvInputRef.current?.click()}>
+                        <Upload className="h-4 w-4 mr-2" />
+                        CSV読込
+                    </Button>
+                    <Button type="button" variant="outline" size="sm" onClick={handleAdd}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        レベル追加
+                    </Button>
+                </div>
             </div>
 
-            <div className="border rounded-md">
+            <div className="border rounded-md overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -96,9 +195,11 @@ export const StructureEditor: React.FC<StructureEditorProps> = ({ value = [], on
                                         />
                                     ) : (
                                         <Input
-                                            type="number"
-                                            value={item.sb}
-                                            onChange={(e) => handleChange(index, 'sb', Number(e.target.value))}
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            value={item.sb ?? ''}
+                                            onChange={(e) => handleChange(index, 'sb', parseNumericInput(e.target.value))}
                                             className="w-full h-8 text-xs px-2"
                                         />
                                     )}
@@ -106,9 +207,11 @@ export const StructureEditor: React.FC<StructureEditorProps> = ({ value = [], on
                                 <TableCell className="p-1">
                                     {!item.isBreak && (
                                         <Input
-                                            type="number"
-                                            value={item.bb}
-                                            onChange={(e) => handleChange(index, 'bb', Number(e.target.value))}
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            value={item.bb ?? ''}
+                                            onChange={(e) => handleChange(index, 'bb', parseNumericInput(e.target.value))}
                                             className="w-full h-8 text-xs px-2"
                                         />
                                     )}
@@ -116,19 +219,24 @@ export const StructureEditor: React.FC<StructureEditorProps> = ({ value = [], on
                                 <TableCell className="p-1">
                                     {!item.isBreak && (
                                         <Input
-                                            type="number"
-                                            value={item.ante || ''}
-                                            onChange={(e) => handleChange(index, 'ante', e.target.value ? Number(e.target.value) : undefined)}
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            value={item.ante ?? ''}
+                                            onChange={(e) => handleChange(index, 'ante', parseNumericInput(e.target.value))}
                                             placeholder="-"
-                                            className="w-full h-8 text-xs px-2"
+                                            readOnly={anteSameAsBB}
+                                            className={`w-full h-8 text-xs px-2 ${anteSameAsBB ? 'bg-gray-100 text-gray-500' : ''}`}
                                         />
                                     )}
                                 </TableCell>
                                 <TableCell className="p-1">
                                     <Input
-                                        type="number"
-                                        value={item.duration}
-                                        onChange={(e) => handleChange(index, 'duration', Number(e.target.value))}
+                                        type="text"
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
+                                        value={item.duration ?? ''}
+                                        onChange={(e) => handleChange(index, 'duration', parseNumericInput(e.target.value))}
                                         className="w-full h-8 text-xs px-2"
                                     />
                                 </TableCell>

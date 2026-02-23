@@ -24,10 +24,12 @@ Built for efficiency, it allows players to quickly record hand histories, tag im
 
 ### 🏆 Tournament Management
 -   **Session Tracking:** Create and manage multiple tournament sessions. Supports "Pending" status for pre-registration.
--   **Structure Management:** Flexible structure editor with support for SB/BB, Ante, and Duration.
+-   **Structure Management:** Flexible structure editor with SB/BB, Ante, and Duration. Supports **CSV import** and **"Ante = BB" auto-sync checkbox**.
+-   **Finish & Ranking:** On tournament finish, enter your finishing rank (e.g. 3rd out of 50). Displayed as a 🏆 badge on the detail and list pages.
 -   **Smart Chip Tracking:** Record stack sizes with auto-calculated current blind levels based on tournament timer.
 -   **Visual Charts:** Monitor chip stack progression and "M-value" over time with interactive charts.
 -   **Integrated Hand Recording:** Seamlessly switch between tournament tracking and hand recording, with auto-linked tournament context and tags.
+-   **Mobile Optimized UI:** Responsive headers and tables with horizontal scroll for comfortable use on smartphones.
 
 ### 📱 PWA & Offline First
 -   **Works Offline:** All data is stored locally using IndexedDB (Dexie.js).
@@ -127,10 +129,12 @@ MIT License
 
 ### 🏆 トーナメント管理
 -   **セッション追跡:** 複数のトーナメントセッションを作成・管理できます。「開始待ち(Pending)」ステータスにも対応。
--   **ストラクチャー管理:** SB/BB、Ante、ラウンド時間を設定可能な柔軟なストラクチャーエディタ。
+-   **ストラクチャー管理:** SB/BB、Ante、ラウンド時間を設定可能な柔軟なストラクチャーエディタ。**CSVインポート**と**「Ante=BB」自動同期チェックボックス**に対応。
+-   **終了時の順位記録:** トーナメント終了時に参加人数と順位を入力可能（例: 50人中3位）。詳細・一覧画面に 🏆 バッジとして表示されます。
 -   **スマートなチップ記録:** トーナメントタイマーに基づき、現在のブラインドレベルを自動計算・補完してチップ量を記録できます。
 -   **視覚的チャート:** チップ量の推移や「M値」の変化をインタラクティブなチャートで確認できます。
 -   **ハンド記録との統合:** トーナメント管理とハンド記録をシームレスに行き来でき、トーナメント情報やタグが自動的に紐付けられます。
+-   **スマホ最適化UI:** ヘッダーやテーブルがモバイル幅でも崩れないレスポンシブ対応、テーブルは横スクロール可能。
 
 ### 📱 PWA & オフラインファースト
 -   **オフライン動作:** すべてのデータは IndexedDB (Dexie.js) を使用してローカルに保存されます。
