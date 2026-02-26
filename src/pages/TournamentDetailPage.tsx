@@ -187,9 +187,9 @@ export const TournamentDetailPage: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                    <div className="space-y-6">
-                        <section className="bg-white p-4 rounded-lg shadow space-y-4">
+                <div className="grid md:grid-cols-2 gap-6 min-w-0">
+                    <div className="space-y-6 min-w-0">
+                        <section className="bg-white p-4 rounded-lg shadow space-y-4 overflow-hidden">
                             <h2 className="font-semibold text-lg">チップ記録</h2>
                             {tournament.status === 'active' ? (
                                 isLoadingRecords ? (
@@ -208,7 +208,7 @@ export const TournamentDetailPage: React.FC = () => {
                             )}
                         </section>
 
-                        <section className="bg-white p-4 rounded-lg shadow space-y-4">
+                        <section className="bg-white p-4 rounded-lg shadow space-y-4 overflow-hidden">
                             <h2 className="font-semibold text-lg">ストラクチャー</h2>
                             {tournament.structure && tournament.structure.length > 0 ? (
                                 <div className="overflow-x-auto">
@@ -250,8 +250,8 @@ export const TournamentDetailPage: React.FC = () => {
                         </section>
                     </div>
 
-                    <div className="space-y-6">
-                        <div className="bg-white p-4 rounded-lg border shadow-sm">
+                    <div className="space-y-6 min-w-0">
+                        <div className="bg-white p-4 rounded-lg border shadow-sm overflow-hidden">
                             <h2 className="text-lg font-semibold mb-4">推移チャート</h2>
                             <TournamentChart
                                 records={records}
@@ -259,7 +259,7 @@ export const TournamentDetailPage: React.FC = () => {
                             />
                         </div>
 
-                        <div className="bg-white p-4 rounded-lg border shadow-sm">
+                        <div className="bg-white p-4 rounded-lg border shadow-sm overflow-hidden">
                             <h2 className="text-lg font-semibold mb-4">履歴</h2>
                             <ChipHistoryList
                                 records={records}

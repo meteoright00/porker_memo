@@ -8,7 +8,7 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children, className }) => {
     return (
-        <div className={cn("container mx-auto px-4 py-6 max-w-5xl", className)}>
+        <div className={cn("w-full mx-auto px-4 py-6 max-w-5xl overflow-x-hidden", className)}>
             {children}
         </div>
     );

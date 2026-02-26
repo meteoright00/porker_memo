@@ -49,8 +49,8 @@ export const TournamentChart: React.FC<TournamentChartProps> = ({ records, start
                     data={chartData}
                     margin={{
                         top: 5,
-                        right: 30,
-                        left: 20,
+                        right: 10,
+                        left: 0,
                         bottom: 5,
                     }}
                 >
