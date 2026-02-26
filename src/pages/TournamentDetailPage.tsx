@@ -140,16 +140,16 @@ export const TournamentDetailPage: React.FC = () => {
     return (
         <Layout>
             <div className="space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                     <div className="flex items-center gap-4">
                         <Button variant="ghost" size="icon" onClick={() => navigate('/tournaments')}>
                             <ArrowLeft className="h-4 w-4" />
                         </Button>
                         <h1 className="text-2xl font-bold">{tournament.name}</h1>
                     </div>
-                    <div className="sm:ml-auto flex items-center gap-2 flex-wrap">
+                    <div className="sm:ml-auto flex items-center gap-2 flex-wrap sm:justify-end">
                         {tournament.status === 'pending' && (
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-wrap">
                                 <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded whitespace-nowrap">未開始</span>
                                 <Button size="sm" onClick={handleStart}>
                                     <Play className="h-4 w-4 mr-1" />
@@ -161,7 +161,7 @@ export const TournamentDetailPage: React.FC = () => {
                             <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded whitespace-nowrap">進行中</span>
                         )}
                         {tournament.status === 'completed' && (
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-wrap">
                                 <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded whitespace-nowrap">完了</span>
                                 {tournament.resultRank && tournament.totalPlayers && (
                                     <span className="flex items-center gap-1 bg-amber-50 text-amber-700 text-xs font-medium px-2.5 py-0.5 rounded whitespace-nowrap">

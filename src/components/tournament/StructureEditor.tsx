@@ -132,7 +132,7 @@ export const StructureEditor: React.FC<StructureEditorProps> = ({ value = [], on
 
     return (
         <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <h3 className="text-sm font-medium whitespace-nowrap">ストラクチャー設定</h3>
                 <div className="flex items-center gap-2 flex-wrap">
                     <label className="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer select-none">
@@ -161,8 +161,8 @@ export const StructureEditor: React.FC<StructureEditorProps> = ({ value = [], on
                 </div>
             </div>
 
-            <div className="border rounded-md overflow-x-auto">
-                <Table>
+            <div className="border rounded-md overflow-x-auto w-full">
+                <Table className="min-w-[500px]">
                     <TableHeader>
                         <TableRow>
                             <TableHead className="w-[50px] text-center h-8 px-1 text-xs">休憩</TableHead>

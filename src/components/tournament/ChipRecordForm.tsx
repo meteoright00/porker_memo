@@ -106,7 +106,7 @@ export const ChipRecordForm: React.FC<ChipRecordFormProps> = ({
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-                <div className="bg-slate-100 p-4 rounded-lg text-center">
+                <div className="bg-slate-100 p-3 sm:p-4 rounded-lg text-center">
                     <div className="text-sm text-gray-500 mb-1">現在のチップ量</div>
                     <div className="text-2xl font-bold flex items-baseline justify-center gap-2">
                         {(() => {
