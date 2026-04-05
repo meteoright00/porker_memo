@@ -33,13 +33,59 @@ describe('StructureEditor', () => {
         const initialValue = [{ sb: 100, bb: 200, duration: 15, isBreak: false }];
         render(<StructureEditor value={initialValue} onChange={mockOnChange} />);
 
-        // Find checkbox for break. Note: Shadcn checkbox might be tricky to query by role strictly without label
-        // Assuming we add aria-label or label text
         const breakCheckbox = screen.getByRole('checkbox', { name: /休憩/ });
         fireEvent.click(breakCheckbox);
 
         expect(mockOnChange).toHaveBeenCalledWith(expect.arrayContaining([
             expect.objectContaining({ isBreak: true })
         ]));
+    });
+
+    it('removes a level when delete button is clicked', () => {
+        const mockOnChange = vi.fn();
+        const initialValue = [
+            { sb: 100, bb: 200, duration: 15, isBreak: false },
+            { sb: 200, bb: 400, duration: 15, isBreak: false }
+        ];
+        render(<StructureEditor value={initialValue} onChange={mockOnChange} />);
+
+        // Get all delete buttons
+        const deleteButtons = screen.getAllByRole('button');
+        const trashButton = deleteButtons.find(btn => btn.querySelector('.lucide-trash-2'));
+        if (trashButton) {
+            fireEvent.click(trashButton);
+        }
+
+        expect(mockOnChange).toHaveBeenCalledWith([
+            expect.objectContaining({ sb: 200, bb: 400 })
+        ]);
+    });
+
+    it('changes values when inputs are modified', () => {
+        const mockOnChange = vi.fn();
+        const initialValue = [{ sb: 100, bb: 200, duration: 15, isBreak: false }];
+        render(<StructureEditor value={initialValue} onChange={mockOnChange} />);
+
+        const inputs = screen.getAllByRole('textbox');
+        // SB input should be the first one
+        fireEvent.change(inputs[0], { target: { value: '150' } });
+
+        expect(mockOnChange).toHaveBeenCalledWith([
+            expect.objectContaining({ sb: 150 })
+        ]);
+    });
+
+    it('syncs Ante with BB when anteSameAsBB is toggled on', () => {
+        const mockOnChange = vi.fn();
+        const initialValue = [{ sb: 100, bb: 200, ante: 100, duration: 15, isBreak: false }];
+        render(<StructureEditor value={initialValue} onChange={mockOnChange} />);
+
+        const anteSameAsBBCheckbox = screen.getByLabelText('AnteをBBと同じにする');
+        fireEvent.click(anteSameAsBBCheckbox);
+
+        // Expect ante to become 200 (same as BB)
+        expect(mockOnChange).toHaveBeenCalledWith([
+            expect.objectContaining({ sb: 100, bb: 200, ante: 200 })
+        ]);
     });
 });

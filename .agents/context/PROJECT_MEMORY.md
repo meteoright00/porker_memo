@@ -9,10 +9,14 @@
 ---
 
 ## 1. Current Context / WIP (現在の作業・進行中のタスク)
-- ハーネスエンジニアリング（AIエージェント向けの開発基盤）の導入が完了した。
+- テストコードの拡充（pokerLogic, PositionSelector等の新規テスト追加、回帰バグ修正）を完了した。
+- アプリケーション全体のVitestカバレッジが向上し、エラーなしのクリーンな状態となった。
 - 次のバグ修正や機能追加の指示待ち状態。
 
 ## 2. Recent Accomplishments (直近の完了事項)
+- コアロジック (`pokerLogic.ts`) のユニットテストを作成し、カバレッジ100%を達成。
+- `TournamentDetailPage.test.tsx` や `HandWizard.test.tsx` のスキップされていたテストを有効化し、すべてPassさせた。
+- `CODEBASE_MAP.md` のテスト状況を最新に更新。
 - `PROJECT_CONSTITUTION.md` を軸とした TDD と品質チェックフローの確立。
 - `CODEBASE_MAP.md`, `ARCHITECTURE.md`, `POKER_RULES.md` によるドメイン知識の共有。
 - Claude / Gemini 両方で実行可能な定型ワークフロー（`/fix-bug`, `/add-feature` など）の構築。

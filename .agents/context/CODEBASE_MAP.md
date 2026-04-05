@@ -100,7 +100,7 @@ porker_memo/
 
 | ファイル | 役割 | テスト |
 |---|---|---|
-| `pokerLogic.ts` | ポジション定義、アクション順序、ハンド終了判定 | — (Pending) |
+| `pokerLogic.ts` | ポジション定義、アクション順序、ハンド終了判定 | `pokerLogic.test.ts` ✅ |
 | `tagUtils.ts` | アクション系列からの自動タグ生成 | `tagUtils.test.ts` ✅ |
 | `blindStructure.ts` | ブラインドレベル計算、M値計算 | `blindStructure.test.ts` ✅ |
 
@@ -121,7 +121,7 @@ porker_memo/
 | `HandWizard.tsx` | ハンド記録ウィザード本体（最大級 ~17KB） | `HandWizard.test.tsx` ✅ |
 | `ActionInput.tsx` | アクション入力UI | `ActionInput.test.tsx` ✅ |
 | `CardSelector.tsx` | カード選択グリッドUI | `CardSelector.test.tsx` ✅ |
-| `PositionSelector.tsx` | ポジション選択UI | — |
+| `PositionSelector.tsx` | ポジション選択UI | `PositionSelector.test.tsx` ✅ |
 | `ResultStep.tsx` | 結果入力ステップ | `ResultStep.test.tsx` ✅ |
 
 ### トーナメントコンポーネント (`src/components/tournament/`)

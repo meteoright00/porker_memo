@@ -11,8 +11,8 @@ describe('ChipRecordForm', () => {
 
         render(<ChipRecordForm onSubmit={mockSubmit} currentBlind={currentBlind} />);
 
-        expect(screen.getByLabelText('SB')).toHaveValue(500);
-        expect(screen.getByLabelText('BB')).toHaveValue(1000);
+        expect(screen.getByLabelText('SB')).toHaveValue('500');
+        expect(screen.getByLabelText('BB')).toHaveValue('1000');
     });
 
     it('displays calculated BB count when chip count acts', async () => {
@@ -48,11 +48,11 @@ describe('ChipRecordForm', () => {
         await waitFor(() => {
             expect(mockSubmit).toHaveBeenCalled();
             // Chip count should be reset (empty)
-            expect(chipInput).toHaveValue(null);
+            expect(chipInput).toHaveValue('');
 
             // SB/BB should also be reset
-            expect(screen.getByLabelText('SB')).toHaveValue(null);
-            expect(screen.getByLabelText('BB')).toHaveValue(null);
+            expect(screen.getByLabelText('SB')).toHaveValue('');
+            expect(screen.getByLabelText('BB')).toHaveValue('');
         });
 
         // Simulate parent re-render with new object ref but same values
@@ -60,8 +60,8 @@ describe('ChipRecordForm', () => {
 
         // Should STILL be empty
         await waitFor(() => {
-            expect(screen.getByLabelText('SB')).toHaveValue(null);
-            expect(screen.getByLabelText('BB')).toHaveValue(null);
+            expect(screen.getByLabelText('SB')).toHaveValue('');
+            expect(screen.getByLabelText('BB')).toHaveValue('');
         });
     });
     it('shows fallback chip count when input is empty', async () => {
@@ -74,19 +74,19 @@ describe('ChipRecordForm', () => {
         // Should show empty input when lastRecord exists (user request)
         // Note: Logic changed. If lastRecord exists, we want input to be empty for fresh entry.
         const chipInput = screen.getByLabelText('チップ量');
-        expect(chipInput).toHaveValue(null);
+        expect(chipInput).toHaveValue('');
 
         // Display area should show lastRecord value as fallback
         expect(screen.getByText('25,000')).toBeInTheDocument();
 
         // Clear input
         fireEvent.change(chipInput, { target: { value: '' } });
-        expect(chipInput).toHaveValue(null);
+        expect(chipInput).toHaveValue('');
 
         // Also clear SB/BB inputs manually (as they would be after submit)
         const bbInput = screen.getByLabelText('BB');
         fireEvent.change(bbInput, { target: { value: '' } });
-        expect(bbInput).toHaveValue(null);
+        expect(bbInput).toHaveValue('');
 
         // Display area should still show 25,000 (fallback)
         // Format: "25,000"

@@ -321,7 +321,7 @@ describe('HandWizard', () => {
             expect(selectedArea?.textContent).not.toContain('5h');
         });
 
-        it.skip('Auto-transitions to Result when hand ends', async () => {
+        it('Auto-transitions to Result when hand ends', async () => {
             const user = userEvent.setup();
             render(<HandWizard onSave={vi.fn()} />);
 
@@ -348,7 +348,8 @@ describe('HandWizard', () => {
             // So clicking Fold should trigger handleAddAction -> checkHandEnded -> setStep(Result)
 
             // Verify we are at Result step
-            expect(await screen.findByText(/Result/i)).toBeInTheDocument();
+            const label = await screen.findByText('Result', { selector: 'label' });
+            expect(label).toBeInTheDocument();
             expect(screen.getByText(/Details/i)).toBeInTheDocument();
         });
 
