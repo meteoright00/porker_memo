@@ -93,6 +93,7 @@ React + TypeScript + Vite で構築。モバイルファースト、オフライ
 | `/sync-docs` | ドキュメント同期 | `.agents/workflows/sync-docs.md` |
 | `/git-push` | Git Push | `.agents/workflows/git-push.md` |
 | `/update-memory` | セッションの終わりに現状や引き継ぎ事項をプロジェクトメモリに記録するワークフロー。 | `.agents/workflows/update-memory.md` |
+| `/extract-knowledge`| 問題解決の過程から再利用可能なルールやスキルを抽出するメタ認知ワークフロー。 | `.agents/workflows/extract-knowledge.md` |
 
 ### 要件定義モード（Claude代替機能）
 
