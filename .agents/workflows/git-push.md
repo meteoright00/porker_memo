@@ -15,7 +15,10 @@ description: 変更内容をコミットしてリモートリポジトリにpush
 
 ## ワークフロー
 
-### Step 1: 変更内容の確認
+### Step 1: ドキュメントの同期 (sync-docs)
+更新漏れを完全に防ぐため、必ず最初に `/sync-docs` ワークフロー相当のチェックを実行し、コードと `CODEBASE_MAP.md` 等のドキュメントの整合性を取る。
+
+### Step 2: 変更内容の確認
 // turbo
 現在の変更内容（差分）を確認する:
 ```powershell
@@ -24,7 +27,11 @@ git diff --cached
 git diff
 ```
 
-### Step 2: 適切なコミットメッセージの生成
+### Step 3: プロジェクトメモリの更新
+// turbo
+`git` コマンドで確認した内容をもとに、`.agents/context/PROJECT_MEMORY.md` の `Recent Accomplishments` と `Next Steps` を更新する。これにより変更内容が長期的にも忘れられなくなる。
+
+### Step 4: 適切なコミットメッセージの生成
 変更内容に基づき、[Conventional Commits](https://www.conventionalcommits.org/) に従ったメッセージ案を AI が作成する。
 
 **フォーマット案:**
@@ -38,7 +45,7 @@ git diff
 - `test`: 不足しているテストの追加や既存のテストの修正
 - `chore`: ビルドプロセスやドキュメント生成などの補助ツールやライブラリの変更
 
-### Step 3: ステージングとコミット
+### Step 5: ステージングとコミット
 // turbo
 すべての変更をステージングし、コミットを実行する:
 ```powershell
@@ -46,12 +53,12 @@ git add .
 git commit -m "[AIによって生成されたメッセージ]"
 ```
 
-### Step 4: リモートへの Push
+### Step 6: リモートへの Push
 // turbo
 現在のブランチをリモートに push する:
 ```powershell
 git push origin (現在のブランチ名)
 ```
 
-### Step 5: 完了報告
+### Step 7: 完了報告
 push が成功したことを報告する。

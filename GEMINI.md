@@ -48,6 +48,7 @@ React + TypeScript + Vite で構築。モバイルファースト、オフライ
 | ドキュメント | 内容 | いつ参照するか |
 |---|---|---|
 | `PROJECT_CONSTITUTION.md` | プロジェクト憲法 | 常に |
+| `.agents/context/PROJECT_MEMORY.md` | 作業の引き継ぎメモ・現在のタスク | 🚀 セッション開始時に必ず読む |
 | `.agents/context/POKER_RULES.md` | ポーカールール・ドメイン知識 | ポーカーロジックに触れるとき |
 | `.agents/context/CODEBASE_MAP.md` | ファイル一覧と役割 | ファイルを探すとき |
 | `.agents/context/ARCHITECTURE.md` | アーキテクチャ詳細 | 設計判断するとき |
@@ -91,6 +92,7 @@ React + TypeScript + Vite で構築。モバイルファースト、オフライ
 | `/refactor` | リファクタリング | `.agents/workflows/refactor.md` |
 | `/sync-docs` | ドキュメント同期 | `.agents/workflows/sync-docs.md` |
 | `/git-push` | Git Push | `.agents/workflows/git-push.md` |
+| `/update-memory` | セッションの終わりに現状や引き継ぎ事項をプロジェクトメモリに記録するワークフロー。 | `.agents/workflows/update-memory.md` |
 
 ### 要件定義モード（Claude代替機能）
 
