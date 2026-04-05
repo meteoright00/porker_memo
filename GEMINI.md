@@ -94,6 +94,7 @@ React + TypeScript + Vite で構築。モバイルファースト、オフライ
 | `/git-push` | Git Push | `.agents/workflows/git-push.md` |
 | `/update-memory` | セッションの終わりに現状や引き継ぎ事項をプロジェクトメモリに記録するワークフロー。 | `.agents/workflows/update-memory.md` |
 | `/extract-knowledge`| 問題解決の過程から再利用可能なルールやスキルを抽出するメタ認知ワークフロー。 | `.agents/workflows/extract-knowledge.md` |
+| `/evolve` | 蓄積された教訓（Instincts）を整理し、正式なルールやドキュメントに昇華させるワークフロー。 | `.agents/workflows/evolve.md` |
 
 ### 要件定義モード（Claude代替機能）
 
