@@ -33,8 +33,6 @@ porker_memo/
 │   │   ├── tournament/         # トーナメント関連UI
 │   │   └── ui/                 # shadcn/ui プリミティブ
 │   ├── data/                   # データ層 (Dexie.js)
-│   ├── features/               # フィーチャーモジュール
-│   │   └── handRecorder/       # ビジュアルハンドレコーダー
 │   ├── lib/                    # ユーティリティ (cn等)
 │   ├── pages/                  # アプリケーションページ
 │   ├── services/               # ビジネスロジックサービス
@@ -102,7 +100,7 @@ porker_memo/
 
 | ファイル | 役割 | テスト |
 |---|---|---|
-| `pokerLogic.ts` | ポジション定義、アクション順序、ハンド終了判定 | `pokerLogic.coverage.test.ts` ✅ |
+| `pokerLogic.ts` | ポジション定義、アクション順序、ハンド終了判定 | — (Pending) |
 | `tagUtils.ts` | アクション系列からの自動タグ生成 | `tagUtils.test.ts` ✅ |
 | `blindStructure.ts` | ブラインドレベル計算、M値計算 | `blindStructure.test.ts` ✅ |
 
@@ -136,12 +134,6 @@ porker_memo/
 | `ChipHistoryList.tsx` | チップ記録履歴表示 | `ChipHistoryList.test.tsx` ✅ |
 | `TournamentChart.tsx` | チップ推移チャート（Recharts） | `TournamentChart.test.tsx` ✅ |
 
-### フィーチャーモジュール (`src/features/handRecorder/`)
-
-| ディレクトリ | 役割 |
-|---|---|
-| `components/` | ビジュアルハンドレコーダーUI |
-| `utils/` | ハンドレコーダー固有ユーティリティ |
 
 ### 共通コンポーネント (`src/components/common/`, `src/components/layout/`)
 
@@ -166,7 +158,6 @@ src/utils/pokerLogic.ts             # ポジション・アクション順序
 src/utils/tagUtils.ts               # 自動タグ付け
 src/pages/HandRecordingPage.tsx     # ページコンテナ
 src/components/recording/*          # UIコンポーネント群
-src/features/handRecorder/*         # ビジュアルレコーダー
 ```
 
 ### 🏆 トーナメント管理機能

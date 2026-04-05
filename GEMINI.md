@@ -90,6 +90,7 @@ React + TypeScript + Vite で構築。モバイルファースト、オフライ
 | `/code-review` | コードレビュー | `.agents/workflows/code-review.md` |
 | `/refactor` | リファクタリング | `.agents/workflows/refactor.md` |
 | `/sync-docs` | ドキュメント同期 | `.agents/workflows/sync-docs.md` |
+| `/git-push` | Git Push | `.agents/workflows/git-push.md` |
 
 ### 要件定義モード（Claude代替機能）
 
