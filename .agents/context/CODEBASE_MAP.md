@@ -3,7 +3,7 @@
 > AIエージェントが「どのファイルを読むべきか」を即座に判断するためのマップ。
 > ファイルの追加・削除・リネーム時に更新すること。
 >
-> **最終更新**: 2026-04-05
+> **最終更新**: 2026-07-09
 > **更新トリガー**: ファイルの追加・削除・リネーム
 
 ---
@@ -40,6 +40,7 @@ porker_memo/
 │   └── utils/                  # ヘルパー関数
 ├── public/                     # 静的アセット
 ├── PROJECT_CONSTITUTION.md     # プロジェクト憲法
+├── AGENTS.md                   # Codex用指示ファイル
 ├── CLAUDE.md                   # Claude用指示ファイル
 ├── GEMINI.md                   # Gemini用指示ファイル
 └── package.json                # 依存パッケージ管理
@@ -64,6 +65,7 @@ porker_memo/
 | `components.json` | shadcn/ui設定 |
 | `vercel.json` | Vercelデプロイ設定（SPAリダイレクト） |
 | `vitest.setup.ts` | Vitestセットアップ (Testing Library) |
+| `AGENTS.md` | Codex用プロジェクト指示。参照ドキュメント、スラッシュコマンドの読み替え、AntiGravity記法の扱いを定義 |
 
 ### エントリポイント
 
